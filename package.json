@@ -1,0 +1,21 @@
+{
+  "name": "mapnet",
+  "version": "1.0.0",
+  "description": "A jsui object for complex mapping of live objects",
+  "main": "src/mapnet.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel src -d build"
+  },
+  "author": "Dimitri Aatos Ellinas",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "gulp": "^4.0.0"
+  },
+  "dependencies": {
+    "@babel/core": "^7.1.2",
+    "gulp-babel": "^8.0.0"
+  }
+}
