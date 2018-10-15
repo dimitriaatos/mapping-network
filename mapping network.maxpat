@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 38.0, 79.0, 1112.0, 787.0 ],
+		"rect" : [ 34.0, 79.0, 941.0, 787.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -38,13 +38,72 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-6",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 536.25, 186.0, 52.0, 22.0 ],
+					"style" : "",
+					"text" : "compile"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-5",
+					"maxclass" : "button",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "bang" ],
+					"patching_rect" : [ 50.5, 173.5, 24.0, 24.0 ],
+					"style" : ""
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bgmode" : 0,
+					"border" : 0,
+					"clickthrough" : 0,
+					"enablehscroll" : 0,
+					"enablevscroll" : 0,
+					"extract" : 1,
+					"id" : "obj-42",
+					"lockeddragscroll" : 0,
+					"maxclass" : "bpatcher",
+					"name" : "bp.AD.maxpat",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"offset" : [ 0.0, 0.0 ],
+					"outlettype" : [ "signal" ],
+					"patching_rect" : [ 696.0, 281.5, 100.0, 116.0 ],
+					"varname" : "bp.AD[1]",
+					"viewvisibility" : 1
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-13",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 295.75, 9.0, 37.0, 22.0 ],
+					"style" : "",
+					"text" : "set 0"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-2",
 					"linecount" : 9,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 71.0, 447.5, 386.0, 127.0 ],
-					"presentation_rect" : [ 290.25, 327.5, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "1) Choose a MIDI Controller (or use the four live.dials)\n2) Add a synth or dsp that has live objects with scripting names\n3) Click scan\n4) Turn mapping mode on\n5) Move a control on your MIDI controller (or one of the fout live.dials)\n6) Click to select any parameters (live objects) you want to map\n7) Set their wheights\n8) Move another control on the MIDI controller and repeat 8 and 9\n9) Turn mapping mode off  (4)"
 				}
@@ -585,7 +644,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 208.875, 78.5, 36.0, 22.0 ],
+					"patching_rect" : [ 208.875, 78.5, 44.0, 22.0 ],
 					"style" : "",
 					"text" : "scan"
 				}
@@ -593,20 +652,29 @@
 			}
 , 			{
 				"box" : 				{
-					"filename" : "mapnet.js",
+					"filename" : "Macintosh HD:/Users/dimitriaatos/Dropbox/why sesame/Max/mapping network/mapnet/build/mapnet.dist.js",
 					"id" : "obj-3",
 					"maxclass" : "jsui",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 106.0, 269.5, 10.0, 140.0 ],
-					"presentation_rect" : [ 0.0, 0.0, 10.0, 140.0 ]
+					"patching_rect" : [ 106.0, 269.5, 66.0, 140.0 ],
+					"presentation_rect" : [ 0.0, 0.0, 66.0, 140.0 ]
 				}
 
 			}
  ],
 		"lines" : [ 			{
+				"patchline" : 				{
+					"destination" : [ "obj-38", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-13", 0 ]
+				}
+
+			}
+, 			{
 				"patchline" : 				{
 					"destination" : [ "obj-20", 0 ],
 					"disabled" : 0,
@@ -750,18 +818,51 @@
 				}
 
 			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-3", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-5", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-3", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-6", 0 ]
+				}
+
+			}
  ],
 		"parameters" : 		{
-			"obj-29" : [ "live.dial[1]", "live.dial", 0 ],
-			"obj-30" : [ "live.dial[2]", "live.dial", 0 ],
+			"obj-42::obj-45" : [ "Attack[1]", "Attack", 0 ],
+			"obj-42::obj-32" : [ "Decay[1]", "Decay", 0 ],
+			"obj-42::obj-20" : [ "mute[1]", "mute", 0 ],
 			"obj-17" : [ "live.dial", "live.dial", 0 ],
-			"obj-31" : [ "live.dial[3]", "live.dial", 0 ]
+			"obj-29" : [ "live.dial[1]", "live.dial", 0 ],
+			"obj-31" : [ "live.dial[3]", "live.dial", 0 ],
+			"obj-30" : [ "live.dial[2]", "live.dial", 0 ]
 		}
 ,
 		"dependency_cache" : [ 			{
-				"name" : "mapnet.js",
-				"bootpath" : "~/Dropbox/why sesame/Max/mapping network/mapnet 0.1",
+				"name" : "mapnet.dist.js",
+				"bootpath" : "~/Dropbox/why sesame/Max/mapping network/mapnet/build",
 				"type" : "TEXT",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "bp.AD.maxpat",
+				"bootpath" : "C74:/packages/BEAP/clippings/BEAP/Envelope",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "background_sm.maxpat",
+				"bootpath" : "C74:/packages/BEAP/misc",
+				"type" : "JSON",
 				"implicit" : 1
 			}
  ],
@@ -832,8 +933,8 @@
 , 			{
 				"name" : "newobjYellow-1",
 				"default" : 				{
-					"accentcolor" : [ 0.82517, 0.78181, 0.059545, 1.0 ],
-					"fontsize" : [ 12.059008 ]
+					"fontsize" : [ 12.059008 ],
+					"accentcolor" : [ 0.82517, 0.78181, 0.059545, 1.0 ]
 				}
 ,
 				"parentstyle" : "",
