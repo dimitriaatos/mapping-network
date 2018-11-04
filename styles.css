@@ -1,0 +1,72 @@
+
+#weights {
+  padding: 20px;
+}
+
+table {
+  /* width: 500px; */
+  /* height: 500px; */
+  margin: auto;
+  background-color: white;
+  /* border: black solid 8px; */
+  /* outline: 2px solid white; */
+}
+
+tr{
+  margin: 0;
+  padding: 0;
+}
+
+th {
+  width: 65px;
+  height: 65px;
+  margin: 0;
+  padding: 0;
+}
+
+#controls {
+  margin: 10px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+
+#midiIO {
+  display: inline;
+}
+
+#midiIO select {
+  font-size: 14pt;
+  overflow: hidden;
+  padding: 5px 10px;
+  margin: 0 0 0 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 200px;
+  height: 40px;
+  color: white;
+  background-color: black;
+  border: 2px solid white;
+}
+
+#mapmode{
+    display:inline;
+    height:40px;
+    width: 100px;
+    font-size: 14pt;
+    padding:5px 8px;
+    background:black;
+    color:white;
+    text-align: center;
+    border: 2px solid white;
+}
+
+#mapmode.checked{
+    background:white;
+    color:black;
+    font-weight:bold
+}
+
+#mapmode input{
+  display:none
+}

@@ -1,0 +1,27 @@
+<!-- <!DOCTYPE html> -->
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <!-- <base href="app://./" />
+    <script src="app:src/mapnet.js" type="module"></script>
+    <script src="app:src/makeUI.js" charset="module"></script> -->
+    <script src="./src/makeUI.js" type="module"></script>
+    <script src="./src/mapnet.js" type="module"></script>
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./shared-styles.css">
+  </head>
+  <body>
+    <aside id="controls">
+      <button id="mapmode">
+        Mapping
+        <input type="checkbox" name="mapmode" class="button">
+      </button>
+      <div id="midiIO">
+        <select id="inputs"></select>
+        <select id="outputs"></select>
+      </div>
+    </aside>
+    <main id="weights"></main>
+  </body>
+</html>
