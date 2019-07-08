@@ -1,4 +1,4 @@
-import {mapmodeUI} from './UIconnections.js'
+import {mapmodeUI} from './UIconnections'
 
 document.querySelector('#mapmode').addEventListener('click', (event) => {
   if (mapmodeUI.checked) {

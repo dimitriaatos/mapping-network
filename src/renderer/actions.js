@@ -1,5 +1,5 @@
-import state from './state.js'
-import mapping from './mapping.js'
+import state from './state'
+import mapping from './mapping'
 
 const mapmode = (mode) => {
   // if (action.mode) {

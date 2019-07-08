@@ -3,13 +3,11 @@
   <head>
     <meta charset="utf-8">
     <title></title>
-    <!-- <base href="app://./" />
-    <script src="app:src/mapnet.js" type="module"></script>
-    <script src="app:src/makeUI.js" charset="module"></script> -->
-    <script src="./src/makeUI.js" type="module"></script>
-    <script src="./src/mapnet.js" type="module"></script>
-    <link rel="stylesheet" href="./styles.css">
-    <link rel="stylesheet" href="./shared-styles.css">
+    <base href="./">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' app:; object-src 'self' app:;">
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/shared-styles.css">
+    <script src="dist/index.js" defer></script>
   </head>
   <body>
     <aside id="controls">

@@ -1,8 +1,8 @@
-import state from './state.js'
-import {Counter} from './helpers/classes.js'
-import {fromID} from './helpers/midi.js'
-import mapping from './mapping.js'
-const ipcRenderer = require('electron').ipcRenderer
+import state from './state'
+import {Counter} from './helpers/classes'
+import {fromID} from './helpers/midi'
+import mapping from './mapping'
+import {ipcRenderer} from 'electron'
 
 const counter = new Counter(22528, mapping.parameters)
 const potentialParameters = []

@@ -1,8 +1,8 @@
-import state from './state.js'
-import action from './actions.js'
-import {inputsUI, outputsUI} from './UIconnections.js'
+import state from './state'
+import action from './actions'
+import {inputsUI, outputsUI} from './UIconnections'
 
-const startMIDI = (onmidimessage) => {
+const startMIDI = onmidimessage => {
   navigator.requestMIDIAccess().then(midiAccess => {
     const getIO = (type, midiAccess) => Array.from(midiAccess[type].entries()).map(io => io[1])
     const allIOs = {

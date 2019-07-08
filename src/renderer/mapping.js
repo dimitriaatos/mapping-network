@@ -1,6 +1,6 @@
-import state from './state.js'
-import Mapping from './helpers/mappingClass.js'
-import {fromID} from './helpers/midi.js'
+import state from './state'
+import Mapping from './helpers/mappingClass'
+import {fromID} from './helpers/midi'
 
 window.mapping = new Mapping()
 

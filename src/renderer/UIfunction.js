@@ -1,11 +1,11 @@
-import state from './state.js'
-import action from './actions.js'
-import {mapmodeUI} from './UIconnections.js'
-import {fromID, toID} from './helpers/midi.js'
-import mapping from './mapping.js'
-import {potentialParameters} from './parameters.js'
-const ipcRenderer = require('electron').ipcRenderer
-import {render} from './weights.js'
+import state from './state'
+import action from './actions'
+import {mapmodeUI} from './UIconnections'
+import {fromID, toID} from './helpers/midi'
+import mapping from './mapping'
+import {potentialParameters} from './parameters'
+import {ipcRenderer} from 'electron'
+import {render} from './weights'
 
 mapmodeUI.addEventListener('change', (event) => {
   const mode = mapmodeUI.checked

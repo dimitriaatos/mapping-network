@@ -1,4 +1,4 @@
-import Matrix from './matrix.js'
+import Matrix from './matrix'
 
 // TODO: store all last control values and trigger this.value when this.editWeight is triggered.
 

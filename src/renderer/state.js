@@ -1,17 +1,19 @@
-import {createStore, combineReducers} from './../node_modules/redux/es/redux.mjs'
-import Matrix from './helpers/matrix.js'
+import {combineReducers, createStore} from 'redux'
+import Matrix from './helpers/matrix'
 
 const io = (state, action) => {
   state = state ? state : {
     selected: {
       input: {},
-      output: {}
+      output: {},
     },
     available: {
       inputs: {},
-      outputs: {}
+      outputs: {},
     },
-    feedback: {}
+    // feedback contains MIDI outputs that correspond to the selected midi inputs
+    // these are usefull for sending feedback to the MIDI controler
+    feedback: {},
   }
   switch (action.type) {
     case 'IO::SELECT_INPUT':
@@ -22,7 +24,7 @@ const io = (state, action) => {
     case 'IO::SELECT_OUTPUT':
       return Object.assign(state, {
         selected: Object.assign(state.selected, {output: action.output}),
-        feedback: state.available.inputs.find((input) => input.name == action.output.name || input.id == action.output.id)
+        feedback: state.available.inputs.find(input => input.name == action.output.name || input.id == action.output.id)
       })
       break
     case 'IO::AVAILABLE':

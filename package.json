@@ -2,19 +2,19 @@
   "name": "mapnet",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "src/main/index.js",
   "scripts": {
-    "start": "electron .",
-    "chrome": "node reload.js"
+    "start": "webpack"
   },
   "author": "Dimitri Aatos Ellinas",
   "license": "ISC",
   "devDependencies": {
-    "live-server": "^1.2.0"
+    "webpack": "^4.35.0",
+    "webpack-cli": "^3.3.5"
   },
   "dependencies": {
-    "electron": "^3.0.6",
-    "electron-menubar": "^1.0.1",
+    "electron": "^3.1.11",
+    "electron-menubar": "^1.0.2",
     "redux": "^4.0.1"
   }
 }

@@ -1,10 +1,10 @@
-import mapping from './mapping.js'
-import action from './actions.js'
-import {weightsUI} from './UIconnections.js'
+import mapping from './mapping'
+import action from './actions'
+import {weightsUI} from './UIconnections'
 
 const grayscale = brightness => `rgb(${[brightness, brightness, brightness]})`
 
-// TODO: on mapmode pass midi messages through, from the controller to the DAW.
+// TODO: on mapmode pass MIDI messages through, from the controller to the DAW.
 //       That way a one-by-one matrix is made.
 
 let table;
@@ -12,7 +12,7 @@ let callback;
 let saveCallback;
 
 const clicking = (rowElement, r, c) => {
-  return (event) => {
+  return event => {
     const initY = event.clientY
     const weight = mapping.weights[r][c]
     const dragging = event => {
@@ -48,7 +48,7 @@ const render = () => {
   })
 }
 
-const connectWeights = (cb) => {
+const connectWeights = cb => {
   callback = cb
   weightsUI.innerHTML = ''
   table = document.createElement('table')
