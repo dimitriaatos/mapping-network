@@ -888,10 +888,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-// const {ipcRenderer} = require('electron')
 
 
-_UIconnections__WEBPACK_IMPORTED_MODULE_2__["mapmodeUI"].addEventListener('change', (event) => {
+_UIconnections__WEBPACK_IMPORTED_MODULE_2__["mapmodeUI"].addEventListener('change', event => {
   const mode = _UIconnections__WEBPACK_IMPORTED_MODULE_2__["mapmodeUI"].checked
 
   if (mode) {
@@ -900,14 +899,14 @@ _UIconnections__WEBPACK_IMPORTED_MODULE_2__["mapmodeUI"].addEventListener('chang
   } else {
     const currentState = _state__WEBPACK_IMPORTED_MODULE_0__["default"].getState()
     let feedback = []
-    currentState.io.feedback.onmidimessage = (midiMessage) => {
+    currentState.io.feedback.onmidimessage = midiMessage => {
       feedback.push(Object(_helpers_midi__WEBPACK_IMPORTED_MODULE_3__["toID"])(midiMessage.data))
     }
-    [..._mapping__WEBPACK_IMPORTED_MODULE_4__["default"].parameters, ..._parameters__WEBPACK_IMPORTED_MODULE_5__["potentialParameters"]].forEach((parameter) => {
+    [..._mapping__WEBPACK_IMPORTED_MODULE_4__["default"].parameters, ..._parameters__WEBPACK_IMPORTED_MODULE_5__["potentialParameters"]].forEach(parameter => {
       currentState.io.selected.output.send([...Object(_helpers_midi__WEBPACK_IMPORTED_MODULE_3__["fromID"])(parameter), 0])
     })
     setTimeout(() => {
-      _parameters__WEBPACK_IMPORTED_MODULE_5__["potentialParameters"].forEach((parameter) => {
+      _parameters__WEBPACK_IMPORTED_MODULE_5__["potentialParameters"].forEach(parameter => {
         if (feedback.includes(parameter)) {
           if (!_mapping__WEBPACK_IMPORTED_MODULE_4__["default"].parameters.includes(parameter)) {
             _mapping__WEBPACK_IMPORTED_MODULE_4__["default"].addParameter(parameter)

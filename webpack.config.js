@@ -1,9 +1,16 @@
 const path = require('path')
 
-module.exports = {
+const base = {
   mode: 'development',
   devtool: 'source-map',
   watch: true,
+  node: {
+    fs: 'empty'
+  },
+  target: 'electron-renderer',
+},
+index = {
+  name: 'index',
   entry: [
     path.resolve(__dirname, './src/renderer/index.js'),
   ],
@@ -12,10 +19,18 @@ module.exports = {
     publicPath: '/',
     path: path.resolve(__dirname, './dist'),
   },
-  node: {
-    fs: 'empty'
-  },
-  target: 'electron-renderer',
-  plugins: [
+},
+ontop = {
+  name: 'ontop',
+  entry: [
+    path.resolve(__dirname, './src/renderer/ontop.js'),
   ],
-}
+  output: {
+    filename: 'ontop.js',
+    publicPath: '/',
+    path: path.resolve(__dirname, './dist'),
+  },
+},
+makeConfig = io => Object.assign({}, base, io)
+
+module.exports = [makeConfig(index), makeConfig(ontop)]

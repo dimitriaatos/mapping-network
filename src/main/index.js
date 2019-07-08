@@ -49,13 +49,18 @@ const createMainWindow = () => {
         nodeIntegration: true,
       },
     })
-    mappingWindow.loadURL('app://./ontop.html')
+    mappingWindow.loadURL(url.format({
+      pathname: path.join(__dirname, './../../ontop.html'),
+      protocol: 'file',
+      slashes: true,
+    }))
   }
 
   ipcMain.on('show-ontop', () => {
     makeMappingWindow()
   })
-  ipcMain.on('ontop-clicked', (event) => {
+  ipcMain.on('ontop-clicked', event => {
+    console.log('main')
     window.webContents.send('ontop-clicked-los')
   })
 

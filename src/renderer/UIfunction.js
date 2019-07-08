@@ -7,7 +7,7 @@ import {potentialParameters} from './parameters'
 import {ipcRenderer} from 'electron'
 import {render} from './weights'
 
-mapmodeUI.addEventListener('change', (event) => {
+mapmodeUI.addEventListener('change', event => {
   const mode = mapmodeUI.checked
 
   if (mode) {
@@ -16,14 +16,14 @@ mapmodeUI.addEventListener('change', (event) => {
   } else {
     const currentState = state.getState()
     let feedback = []
-    currentState.io.feedback.onmidimessage = (midiMessage) => {
+    currentState.io.feedback.onmidimessage = midiMessage => {
       feedback.push(toID(midiMessage.data))
     }
-    [...mapping.parameters, ...potentialParameters].forEach((parameter) => {
+    [...mapping.parameters, ...potentialParameters].forEach(parameter => {
       currentState.io.selected.output.send([...fromID(parameter), 0])
     })
     setTimeout(() => {
-      potentialParameters.forEach((parameter) => {
+      potentialParameters.forEach(parameter => {
         if (feedback.includes(parameter)) {
           if (!mapping.parameters.includes(parameter)) {
             mapping.addParameter(parameter)

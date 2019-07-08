@@ -4,12 +4,12 @@
   "description": "",
   "main": "src/main/index.js",
   "scripts": {
-    "start": "webpack"
+    "start": "electron . && webpack"
   },
   "author": "Dimitri Aatos Ellinas",
   "license": "ISC",
   "devDependencies": {
-    "webpack": "^4.35.0",
+    "webpack": "^4.35.2",
     "webpack-cli": "^3.3.5"
   },
   "dependencies": {
