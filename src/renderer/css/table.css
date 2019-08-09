@@ -1,0 +1,16 @@
+table {
+  margin: auto;
+  background-color: white;
+}
+
+tr{
+  margin: 0;
+  padding: 0;
+}
+
+td {
+  width: 65px;
+  height: 65px;
+  margin: 0;
+  padding: 0;
+}

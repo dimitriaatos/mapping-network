@@ -1,11 +1,13 @@
-import state from './state'
+import store from './store'
 import Mapping from './helpers/mappingClass'
-import {fromID} from './helpers/midi'
+import { fromID } from './helpers/midi'
 
-window.mapping = new Mapping()
+const mapping = new Mapping()
 
-mapping.output = (id, value) => {
-  state.getState().io.selected.output.send([...fromID(id), value * 127])
+mapping.output = (parameter, value) => {
+  const a = [...fromID(parameter.id), Math.round(value * 127)]
+  // console.log(a)
+  store.getState().io.selected.outputs.send([a[0], a[1], a[2]])
 }
 
 export default mapping

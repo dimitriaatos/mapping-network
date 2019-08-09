@@ -1,2 +1,0 @@
-import './mapnet'
-import './makeUI'

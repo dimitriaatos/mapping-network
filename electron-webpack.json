@@ -1,0 +1,11 @@
+{
+  "main": {
+    "sourceDirectory": "src/main"
+  },
+  
+  "renderer": {
+    "sourceDirectory": "src/renderer",
+    "webpackConfig": "webpack.config.renderer.js"
+  },
+  "whiteListedModules": [ "react-redux" ]
+}

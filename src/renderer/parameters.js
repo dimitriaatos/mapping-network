@@ -1,17 +1,16 @@
-import state from './state'
+import store from './store'
 import {Counter} from './helpers/classes'
 import {fromID} from './helpers/midi'
 import mapping from './mapping'
 import {ipcRenderer} from 'electron'
 
 const counter = new Counter(22528, mapping.parameters)
-const potentialParameters = []
+const newPotentialParameters = []
 
-ipcRenderer.on('ontop-clicked-los', () => {
+ipcRenderer.on('fromOntop', () => {
   const message = counter.next()
-  // controlIn(message)
-  potentialParameters.push(message)
-  state.getState().io.selected.output.send([...fromID(message), 0])
+  newPotentialParameters.push({id: message})
+  store.getState().io.selected.outputs.send([...fromID(message), 0])
 })
 
-export {potentialParameters}
+export {newPotentialParameters}

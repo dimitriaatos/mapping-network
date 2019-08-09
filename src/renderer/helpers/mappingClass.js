@@ -1,81 +1,120 @@
 import Matrix from './matrix'
+import { Speed } from './classes'
 
 // TODO: store all last control values and trigger this.value when this.editWeight is triggered.
 
-const bothMatrices = function(callback) {
-  [this.weights, this.values].forEach(callback)
+const getIndex = (query, array) => {
+  return query.index ? query.index : array.indexOf(query)
 }
 
-export default class Mapping {
-  constructor(mapping = {}) {
-    this.output
-    this.values = new Matrix()
-    this.weights = new Matrix()
-    this.controls = new Array()
-    this.parameters = new Array()
-    this.mapping = mapping
-    this.matrices = bothMatrices.bind(this)
+const Matrices = class extends Matrix {
+  constructor() {
+    super()
   }
-  input(control, value){
-    const index = this.controls.indexOf(control)
-    const controlColumn = this.weights.getColumn(index)
+  values = new Matrix()
+  columns = {
+    add: () => {
+      this.addColumn()
+      this.values.addColumn()
+    },
+    delete: (index) => {
+      this.deleteColumn(index)
+      this.values.deleteColumn(index)
+    },
+  }
+  rows = {
+    add: () => {
+      const index = this.addRow()
+      if (this._columns) this[index - 1][this._columns <= this.length ? this._columns - 1 : this.length -1] = 1
+      this.values.addRow()
+    },
+    delete: (index) => {
+      this.deleteRow(index)
+      this.values.deleteRow(index)
+    }
+  }
+  edit(row, column, value) {
+    return this._edit(row, column, value)
+  }
+  input(index, value, callback) {
+    const controlColumn = this.getColumn(index)
     for (let i = 0; i < controlColumn.length; i++) {
       this.values[i][index] = controlColumn[i] * value
     }
-    console.dir(this.values);
     for (let i = 0; i < controlColumn.length; i++) {
-      if (controlColumn[i] != 0) {
+      if (controlColumn[i] !== 0) {
         let outputValue = 0
         for (let j = 0; j < this.values[i].length; j++) {
           outputValue += this.values[i][j]
         }
-        this.output(this.parameters[i], outputValue)
+        callback(i, outputValue)
       }
     }
   }
-  addControl(control){
-    this.controls.push(control)
-    this.matrices((matrix) => {
-      matrix.addColumn()
-    })
+}
+
+const Axis = class extends Array {
+  constructor(weightsAxis){
+    super()
+    this.weightsAxis = weightsAxis
   }
-  addParameter(parameter){
-    this.parameters.push(parameter)
-    this.matrices((matrix) => {
-      matrix.addRow()
-    })
+  add(item) {
+    const init = {
+      id: 0,
+      value: 0,
+      description: '',
+      name: '',
+      speed: new Speed(),
+    }
+    this.push({...init, ...item})
+    this.weightsAxis.add()
   }
-  deleteControl(control){
-    const index = this.controls.indexOf(control)
-    this.controls.splice(index, 1)
-    this.matrices((matrix) => {
-      matrix.deleteColumn(index)
-    })
+  delete(item) {
+    const index = getIndex(item, this)
+    this.splice(index, 1)
+    this.weightsAxis.delete(index)
   }
-  deleteParameter(parameter){
-    const index = this.parameters.indexOf(parameter)
-    this.controls.splice(index, 1)
-    this.matrices((matrix) => {
-      matrix.deleteRow(index)
-    })
+  indexOf(i) {
+    return this.findIndex(item => item.id === i.id)
   }
-  edit(row, column, value){
+  // changeIndex(item, to) {
+
+  // }
+}
+
+const Mapping = class {
+  output
+  weights = new Matrices()
+  controls = new Axis(this.weights.columns)
+  parameters = new Axis(this.weights.rows)
+  constructor(){
+    this.controls
+  }
+  input(control, cValue, timeStamp) {
+    const cIndex = this.controls.indexOf(control)
+    const output = (oIndex, oValue) => {
+      this.output(this.parameters[oIndex], oValue)
+    }
+    this.controls[cIndex].speed.output = speed => {
+      this.controls[cIndex].value = speed
+      this.weights.input(cIndex, speed, output)
+    }
+    this.controls[cIndex].speed.input(cValue, timeStamp)
+  }
+  edit(row, column, value) {
     return this.weights.edit(row, column, value)
   }
-  changeControlIndex(control, to){
-
-  }
-  changeParameterIndex(parameter, to){
-
-  }
-  get mapping() {
-    return {
-      weights: new Matrix(this.weights),
+  get(target) {
+    const all = {
+      weights: [...this.weights],
       controls: [...this.controls],
-      parameters: [...this.parameters]
+      parameters: [...this.parameters],
     }
+    return target ? all[target] : all
   }
-  set mapping(newMapping) {
+  set(newMapping) {
     Object.assign(this, newMapping)
   }
 }
+
+export default Mapping

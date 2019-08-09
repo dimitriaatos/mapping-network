@@ -4,17 +4,36 @@
   "description": "",
   "main": "src/main/index.js",
   "scripts": {
-    "start": "electron . && webpack"
+    "start": "electron-webpack dev"
   },
   "author": "Dimitri Aatos Ellinas",
   "license": "ISC",
   "devDependencies": {
-    "webpack": "^4.35.2",
-    "webpack-cli": "^3.3.5"
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.5.5",
+    "@babel/plugin-proposal-private-methods": "^7.4.4",
+    "@babel/preset-react": "^7.0.0",
+    "babel-eslint": "^10.0.2",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.1.0",
+    "electron-webpack": "^2.7.4",
+    "eslint": "^6.1.0",
+    "eslint-config-google": "^0.13.0",
+    "eslint-plugin-private-props": "^0.3.0",
+    "eslint-plugin-react": "^7.14.3",
+    "style-loader": "^0.23.1",
+    "webpack": "^4.39.1",
+    "webpack-cli": "^3.3.6"
   },
   "dependencies": {
-    "electron": "^3.1.11",
-    "electron-menubar": "^1.0.2",
-    "redux": "^4.0.1"
+    "@material-ui/core": "^4.3.1",
+    "@material-ui/icons": "^4.2.1",
+    "electron": "^3.1.13",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-redux": "^7.1.0",
+    "react-router-static": "^1.0.0",
+    "redux": "^4.0.4"
   }
 }
