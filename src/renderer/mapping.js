@@ -6,7 +6,6 @@ const mapping = new Mapping()
 
 mapping.output = (parameter, value) => {
   const a = [...fromID(parameter.id), Math.round(value * 127)]
-  // console.log(a)
   store.getState().io.selected.outputs.send([a[0], a[1], a[2]])
 }
 

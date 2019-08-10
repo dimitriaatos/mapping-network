@@ -7,7 +7,8 @@ const Cell = props => {
     <td
       style={{
         backgroundColor: grayscale(255 - props.value * 255),
-        ...cellSize,
+        width: cellSize,
+        height: cellSize,
         margin: 0,
         padding: 0,
       }}

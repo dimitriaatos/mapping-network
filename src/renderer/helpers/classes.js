@@ -8,20 +8,24 @@ const Change = class {
 }
 
 const Counter = class {
-  constructor(init = 0, exclude = []) {
+  constructor(init = 0, excludeList = []) {
     this.init = init
     this.value = init
-    this.exclude = exclude
+    this.excludeList = excludeList
   }
   next() {
     this.value += 1
-    while (this.exclude.includes(this.value)) {
+    while (this.excludeList.includes(this.value)) {
       this.value += 1
     }
     return this.value
   }
   reset() {
     return this.value = this.init
+  }
+  exclude(list) {
+    this.excludeList = list
+    return this
   }
 }
 

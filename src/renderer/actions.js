@@ -1,9 +1,11 @@
 import store from './store'
 import mapping from './mapping'
-import { fromID, toID, makeTitle } from './helpers/midi'
-import { newPotentialParameters } from './parameters'
-import { Speed } from './helpers/classes';
+import { makeTitle } from './helpers/midi'
+import { Speed } from './helpers/classes'
+// import Mapping from './helpers/mappingClass';
 // import { ipcRenderer } from 'electron'
+import { newId } from './parameters'
+import { otherType } from './helpers/functions';
 
 const findIO = query => {
   const state = store.getState(),
@@ -17,43 +19,14 @@ const findIO = query => {
   console.error(`Wrong type of query was given to findIO`)
 }
 
-const save = () => ({
+const save = weights => ({
   type: 'MAPPING',
-  weights: mapping.get('weights')
+  weights: weights || mapping.weights
 }),
 mapmode = mode => {
   const state = store.getState()
   if (state.mapmode !== mode) {
     // ipcRenderer.send('toOntop', mode)
-    if (!mode) {
-      let fromFeedback = []
-
-      // when feedback is resieved (parameter is mapped) push it to the fromFeedback array
-      state.io.feedback.onmidimessage = midiMessage => {
-        fromFeedback.push({id: toID(midiMessage.data)})
-      }
-      const potentialParameters = [...mapping.parameters, ...newPotentialParameters]
-      // sending the MIDI messages of all potentially mapped parameters
-      potentialParameters.forEach(({id}) => {
-        state.io.selected.outputs.send([...fromID(id), 0])
-      })
-
-      // waiting for the DAW to respond through the feedbpack port
-      setTimeout(() => {
-        potentialParameters.forEach(parameter => {
-
-          if (fromFeedback.some(({id}) => id === parameter.id)) {
-            if (!mapping.parameters.some(({id}) => id === parameter.id)) {
-              mapping.parameters.add(parameter)
-            }
-          } else {
-            mapping.parameters.delete(parameter)
-          }
-        })
-        state.io.feedback.onmidimessage = undefined
-        store.dispatch(save())
-      }, 500)
-    }
     return ({
     type: 'MAP_MODE',
     mode,
@@ -87,20 +60,29 @@ available = io => ({
 editMapping = ['parameters', 'controls'].reduce((accum, axis) => {
   accum[axis] = {
     add: item => {
-      const {short, long} = makeTitle(item)
-      item.name = short
-      item.description = long
-      mapping[axis].add(item)
+      item = item || {id: newId(axis)}
+
+      axis === 'parameters' &&
+      mapping.weights.length === 0 &&
+      mapping.weights._columns === 0 &&
+      store.dispatch(actions.mapping[otherType(axis)].add())
+
+      item.description = makeTitle(item).long
+      const {weights, axisData} = mapping[axis].add(item)
       return {
         type: 'MAPPING::ADD',
-        mapping,
+        weights,
+        [axis]: axisData,
+        axis,
       }
     },
-    delete: value => {
-      mapping[axis].delete(value)
+    delete: item => {
+      const {weights, axisData} = mapping[axis].delete(item)
       return {
         type: 'MAPPING::DELETE',
-        mapping,
+        weights,
+        [axis]: axisData,
+        axis,
       }
     },
     edit: data => {
@@ -108,7 +90,7 @@ editMapping = ['parameters', 'controls'].reduce((accum, axis) => {
       (mapping[axis][data.index] = {...mapping[axis][data.index], ...data}) :
       (mapping[axis][data.index].speed = new Speed({...mapping[axis][data.index].speed, ...data.speed}))
       return {
-        type: 'MAPPING:ADD',
+        type: 'MAPPING:EDIT',
         mapping,
       }
     }

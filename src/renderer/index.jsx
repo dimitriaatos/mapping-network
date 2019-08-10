@@ -17,9 +17,9 @@ startMIDI().then(() => {
   map()
 })
 
-import { ipcRenderer } from 'electron'
-import actions from './actions'
-ipcRenderer.on('mapmode', (event, mode) => store.dispatch(actions.mapmode(mode)))
+// import { ipcRenderer } from 'electron'
+// import actions from './actions'
+// ipcRenderer.on('mapmode', (event, mode) => store.dispatch(actions.mapmode(mode)))
 
 const routes = {
   default: App,

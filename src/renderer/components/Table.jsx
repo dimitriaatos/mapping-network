@@ -4,32 +4,36 @@ import HeaderCell from './HeaderCell'
 import { useDispatch, useSelector } from 'react-redux'
 import actions from './../actions'
 import { table, cellSize, cellSizeNum } from './sty'
+import { Matrices } from './../helpers/mappingClass'
 
 import IO from './IO'
+import AddButton from './AddButton'
 
-const Table = props => {
-  const [state, setState] = useState(props.value || [[]]),
+const Table = () => {
+  const weights = useSelector(state => state.mapping.weights),
+    [state, setState] = useState(weights),
     dispatch = useDispatch(),
     names = useSelector(state => state.mapping.controls),
     rowChange = (row, r) => {
-      setState(state => {state[r] = row; return [...state]})
+      setState(state => {
+        state[r] = row
+        return new Matrices(state)
+      })
     },
-    changeStop = () => {
-      dispatch(actions.mapping.save())
-    }
-
-  useEffect(() => {
-    setState(props.value)
-  }, [props.value])
+    changeStop = () => dispatch(actions.mapping.save(state)),
+    add = type => dispatch(actions.mapping[type].add())
+    useEffect(() => setState(weights), [weights])
   return (
     <div style={{paddingRight: cellSizeNum * 2 + 'px'}} >
       <table style={{margin: 'auto', backgroundColor: 'white'}}>
         <thead>
           <tr style={{width: cellSize, minHeight: cellSize}} >
-            <th></th><th></th>
-            <th colSpan={state.length} >
-            <IO type="inputs" />
-          </th></tr>
+            <th></th>
+            <th></th>
+            <th colSpan={state._columns} >
+              <IO type="inputs" />
+            </th>
+          </tr>
           <tr>
             <th></th>
             <th></th>
@@ -51,6 +55,7 @@ const Table = props => {
               <Row
                 key={r}
                 index={r}
+                length={state.length}
                 value={row}
                 onChange={rowChange}
                 onChangeStop={changeStop}
@@ -58,6 +63,17 @@ const Table = props => {
             ))
           }
         </tbody>
+        <tfoot>
+          <tr>
+            <td></td>
+            <td></td>
+            <td colSpan={state._columns} >
+              <div style={{width: '100%', display: 'flex', justifyContent: 'center'}} >
+                <AddButton type="parameters" onClick={add} />
+              </div>
+            </td>
+          </tr>
+        </tfoot>
       </table>
     </div>
   )

@@ -8,7 +8,7 @@ const io = () => {
 }
 
 const map = () => {
-  const dim = [2, 2]
+  const dim = [0, 0]
   
   for (let i = 0; i < dim[0]; i++) {
     store.dispatch(actions.mapping.controls.add({id: toID([176, i])}))
@@ -16,7 +16,7 @@ const map = () => {
   for (let i = 0; i < dim[1]; i++) {
     store.dispatch(actions.mapping.parameters.add({id: toID([176, i])}))
   }
-  store.dispatch(actions.mapping.save())
+  // store.dispatch(actions.mapping.save())
 }
 
 // const weights () => {

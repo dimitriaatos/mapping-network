@@ -4,22 +4,31 @@ import HeaderCell from './HeaderCell'
 import { clip } from './../helpers/functions'
 import mapping from './../mapping'
 import { table, cellSize } from './sty'
-
+import { useDispatch } from 'react-redux'
 import IO from './IO'
 
+// import IO from './IO'
+import AddButton from './AddButton'
+import actions from '../actions';
+
 const Row = props => {
+  const dispatch = useDispatch(),
+    add = type => dispatch(actions.mapping[type].add())
   return (
     <tr style={{margin: 0, padding: 0}}>
       {
-        props.index === 0 &&
-        <th
-          style={{width: cellSize, minHeight: cellSize, position: 'relative'}}
-          rowSpan={props.value.length}
+        props.index === 0 && (
+          <th
+          rowSpan={props.length}
         >
-          <div style={{transform: 'rotate(270deg)', position: 'absolute', bottom: '50%', right: 0}} >
-            <IO type="outputs" />
-          </div>
-        </th>}
+        <div style={{width: cellSize, minHeight: cellSize, position: 'relative'}} >
+            <div style={{transform: 'rotate(270deg)', position: 'absolute', bottom: '50%', right: 0}} >
+              <IO type="outputs" />
+            </div>
+        </div>
+        </th>
+        )
+      }
       <th>
         <div style={table.row}>
           <HeaderCell type="parameter" index={props.index} />
@@ -53,6 +62,12 @@ const Row = props => {
             }}
           />
         ))
+      }
+      {
+        props.index === 0 &&
+        <th rowSpan={props.length}>
+          <AddButton onClick={add} type="controls" />
+        </th>
       }
     </tr>
   )

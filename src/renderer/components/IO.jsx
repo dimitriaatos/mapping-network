@@ -21,6 +21,8 @@ import { refreshMIDI } from './../initMIDI'
 
 import WarningIcon from '@material-ui/icons/Warning'
 
+import { otherIO } from './../helpers/functions'
+
 const IO = props => {
   const dispatch = useDispatch(),
     available = useSelector(state => state.io.available, shallowEqual),
@@ -32,13 +34,12 @@ const IO = props => {
     handleClose = () => setOpen(false),
     [tab, setTab] = useState('inputs'),
     changeTab = (event, tab) => setTab(tab),
-    handleOpen = type => {setOpen(true); setTab(type)},
-    otherType = type => type === 'inputs' ? 'outputs' : type === 'outputs' ? 'inputs' : console.error('wrong type')
+    handleOpen = type => {setOpen(true); setTab(type)}
 
   return (
     <>
       <Button onClick={() => handleOpen(props.type)} >{props.type}</Button>
-      <Modal open={open} onClose={handleClose}>
+      <Modal open={open} onClose={handleClose} style={{alignItems:'center', justifyContent:'center'}} >
         <Card style={{width: '500px', margin: 'auto'}}>
           <CardContent>
             <AppBar position="static">
@@ -74,7 +75,7 @@ const IO = props => {
   
                     </ListItemText>
                     {
-                      io.name === selected[otherType(type)].name && (
+                      io.name === selected[otherIO(type)].name && (
                         <>
                           <ListItemSecondaryAction >
                             <WarningIcon/>

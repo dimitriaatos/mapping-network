@@ -18,7 +18,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import actions from '../actions'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Switch from '@material-ui/core/Switch'
-import mapping from '../mapping'
 
 const ContextMenu = props => {
   const id = useSelector(state => state.mapping[props.type][props.index].id),
@@ -26,6 +25,7 @@ const ContextMenu = props => {
   normalize = useSelector(state => state.mapping[props.type][props.index].speed.normalize),
   dispatch = useDispatch(),
   midiData = midiParse(fromID(id)),
+  isControl = props.type === 'controls',
   change = dataType => ({target: {value}}) => {
     dispatch(actions.mapping[props.type].edit({index: props.index, id: toID(midiFormat({...midiData, [dataType]: value}))}))
   },
@@ -71,20 +71,24 @@ const ContextMenu = props => {
           />
         </>
         } />
-        <ListItemSecondaryAction>
-          <IconButton
-            onClick={() => {setRemap(state => !state)}}
-          >
-            {
-            remap ?
-            <SettingsInputSvideoIconFilled/> :
-            <SettingsInputSvideoIcon />
-            }
-          </IconButton>
-        </ListItemSecondaryAction>
+        {
+          isControl && (
+            <ListItemSecondaryAction>
+            <IconButton
+              onClick={() => {setRemap(state => !state)}}
+            >
+              {
+              remap ?
+              <SettingsInputSvideoIconFilled/> :
+              <SettingsInputSvideoIcon />
+              }
+            </IconButton>
+          </ListItemSecondaryAction>
+          )
+        }
     </ListItem>
     {
-      (props.type === 'controls') && (
+      isControl && (
         <ListItem>
           {/* <ListItemIcon>
 

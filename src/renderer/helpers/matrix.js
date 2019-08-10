@@ -31,10 +31,15 @@ const absolute = (row, c, value) => {
 }
 
 const Matrix = class extends Array {
-  constructor() {
-    super()
-  }
+  
   _columns = 0
+
+  constructor(array = new Array()) {
+    
+    super(...(array instanceof Array ? array : new Array()))
+    this._columns = array._columns || (array[0] && array[0].length) || 0
+  }
+
   setRow(index, array) {
     return this[index] = array
   }
@@ -81,7 +86,7 @@ const Matrix = class extends Array {
   }
 
   deleteColumn(index) {
-    if (this.length != 0) {
+    if (this.length > 0) {
       this.forEach((row, i) => {
         this[i].splice(index, 1)
       })

@@ -7,16 +7,20 @@ import { table } from './sty'
 
 import IconButton from '@material-ui/core/IconButton'
 import CloseIcon from '@material-ui/icons/Close'
+import DirectionsRunIcon from '@material-ui/icons/DirectionsRun'
 // import DragIndicator from '@material-ui/icons/DragIndicator'
 // import Tooltip from '@material-ui/core/Tooltip'
 import Popover from '@material-ui/core/Popover'
 import ContextMenu from './ContextMenu'
+import { makeTitle } from '../helpers/midi'
 
 const HeaderCell = props => {
   const types = plural(props.type),
-    name = useSelector(state => state.mapping[types][props.index].name),
-    // description = useSelector(state => state.mapping[types][props.index].description),
+    id = useSelector(state => state.mapping[types][props.index].id),
+    name = useSelector(state => state.mapping[types][props.index].name) || makeTitle({id}).short,
+  // description = useSelector(state => state.mapping[types][props.index].description),
     mapmode = useSelector(state => state.mapmode),
+    speedState = useSelector(state => state.mapping[types][props.index].speed.state),
     dispatch = useDispatch(),
     changeName = ({currentTarget: {value}}) => {
       dispatch(actions.mapping.rename({axis: plural(props.type), index: props.index, value}))
@@ -71,6 +75,7 @@ const HeaderCell = props => {
           onMouseDown={testInteraction}
           onContextMenu={controlMenu}
         >
+          {speedState && <DirectionsRunIcon style={{width: 10, position: 'absolute', top: 0, right: 0}}/>}
           {
             editable ?
             <input

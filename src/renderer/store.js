@@ -1,4 +1,5 @@
 import {combineReducers, createStore} from 'redux'
+import Mapping, { Matrices } from './helpers/mappingClass'
 
 const io = (state, action) => {
   state = state || {
@@ -37,21 +38,17 @@ mapmode = (state = false, action) => {
   }
 },
 mapping = (state, action) => {
-  state = state || {
-    controls: [],
-    parameters: [],
-    weights: [],
-  }
-
+  state = state || new Mapping()
   switch (action.type) {
     case 'MAPPING::ADD':
-      return action.mapping
     case 'MAPPING::DELETE':
-      return action.mapping
+      state.weights = new Matrices(action.weights)
+      state[action.axis] = action[action.axis]
+      return new Mapping(state)
     case 'MAPPING::RENAME':
       return action.mapping
     case 'MAPPING':
-      return { ...state, weights: action.weights }
+      return new Mapping({ ...state, weights: new Matrices(action.weights) })
     default:
       return state
   }
@@ -62,7 +59,8 @@ const reducer = combineReducers({io, mapmode, mapping})
 const store = createStore(reducer)
 
 store.subscribe(() => {
-  console.dir(store.getState())
+  const state = store.getState();
+  console.dir(state.mapping)
 })
 
 export default store
