@@ -1,123 +1,111 @@
 import store from './store'
-import mapping from './mapping'
-import { makeTitle } from './helpers/midi'
-import { Speed } from './helpers/classes'
-// import Mapping from './helpers/mappingClass';
-// import { ipcRenderer } from 'electron'
-import { newId } from './parameters'
-import { otherType } from './helpers/functions';
+import appActions from './appActions'
+import { output } from './iofunctions'
+import matrix from './helpers/matrixFunctions'
+import { initItem } from './helpers/actionHelpers'
 
-const findIO = query => {
-  const state = store.getState(),
-  [key, value] = Object.entries(query)[0]
-  return typeof value === 'string' ?
-  state.io.available[key].find(io => io.name == value) :
-  typeof value === 'number' ?
-  state.io.available[key].find(io => io.id == value.toString()) :
-  typeof value === 'object' && ('index' in value) ?
-  state.io.available[key][value.index] :
-  console.error(`Wrong type of query was given to findIO`)
-}
-
-const save = weights => ({
-  type: 'MAPPING',
-  weights: weights || mapping.weights
-}),
-mapmode = mode => {
-  const state = store.getState()
-  if (state.mapmode !== mode) {
-    // ipcRenderer.send('toOntop', mode)
-    return ({
-    type: 'MAP_MODE',
-    mode,
+const change = axis => ['add', 'delete'].reduce((accum, act) => {
+  accum[act] = item => {
+    const typeBool = act === 'add'
+    const isControl = axis === 'controls' && !typeBool
+    const state = store.getState().mapping
+    const inItem = initItem(item, axis, state)
+    
+    if (isControl) state.weights = state.weights.map((row, r) => {
+      return matrix.edit(state.weights, r, inItem.index, 0)
     })
-  } else return {type: 'none'}
-},
-inputs = inputs => {
-  inputs = findIO({inputs})
-  /**
-   * Side effect:
-   * remove callback from previously seceted midi input
-   * and create one for the newly selected one
-   */
-  store.getState().io.selected.inputs.onmidimessage = undefined
-  inputs.onmidimessage = midiMessage => {
-    document.dispatchEvent(new CustomEvent('midiIn', {detail: midiMessage.data}))
-  }
-  return {
-    type: 'IO::SELECT_INPUTS',
-    inputs,
-  }
-},
-outputs = outputs => ({
-  type: 'IO::SELECT_OUTPUTS',
-  outputs: findIO({outputs}),
-}),
-available = io => ({
-  type: 'IO::AVAILABLE',
-  io,
-}),
-editMapping = ['parameters', 'controls'].reduce((accum, axis) => {
-  accum[axis] = {
-    add: item => {
-      item = item || {id: newId(axis)}
+  
+    typeBool ? state[axis].splice(inItem.index, 0, inItem) :
+    state[axis].splice(inItem.index, 1)
+    const [weights, columns] = matrix[axis][act](state.weights, state.columns, true)
+    const [values] = matrix[axis][act](state.values, state.columns)
 
-      axis === 'parameters' &&
-      mapping.weights.length === 0 &&
-      mapping.weights._columns === 0 &&
-      store.dispatch(actions.mapping[otherType(axis)].add())
+    if (isControl) {
+      values.forEach((row, r) => {
+        values[r] = state.controls.map(
+          (item, index) => item.value * weights[r][index]
+        )
+        state.parameters[r].value = matrix.output.add(values, r)
+        output(state.parameters[r])
+      })
+    }
 
-      item.description = makeTitle(item).long
-      const {weights, axisData} = mapping[axis].add(item)
-      return {
-        type: 'MAPPING::ADD',
-        weights,
-        [axis]: axisData,
-        axis,
-      }
-    },
-    delete: item => {
-      const {weights, axisData} = mapping[axis].delete(item)
-      return {
-        type: 'MAPPING::DELETE',
-        weights,
-        [axis]: axisData,
-        axis,
-      }
-    },
-    edit: data => {
-      !data.speed ?
-      (mapping[axis][data.index] = {...mapping[axis][data.index], ...data}) :
-      (mapping[axis][data.index].speed = new Speed({...mapping[axis][data.index].speed, ...data.speed}))
-      return {
-        type: 'MAPPING:EDIT',
-        mapping,
-      }
+    return {
+      type: typeBool ? 'MAPPING::ADD' : 'MAPPING::DELETE',
+      weights,
+      values,
+      columns,
+      axis,
+      [axis]: [...state[axis]]
     }
   }
   return accum
-}, {}),
-rename = ({axis, index, value}) => {
-  mapping[axis][index].name = value
+}, {})
+
+const axisEdit = ['parameters', 'controls'].reduce((accum, axis) => {
+  accum[axis] = {
+    ...change(axis),
+    edit: item => {
+      return {
+        type: 'MAPPING::EDIT',
+        item,
+        axis,
+      }
+    },
+  }
+  return accum
+}, {})
+
+const edit = (r, c, value) => {
+  const {weights, values, controls, parameters} = store.getState().mapping
+  weights[r] = matrix.edit(weights, r, c, value)
+  values[r] = controls.map(
+    (item, index) => item.value * weights[r][index]
+  )
+  parameters[r].value = matrix.output.add(values, r)
+  output(parameters[r])
   return {
-    type: 'MAPPING::RENAME',
-    mapping,
+    type: 'MAPPING',
+    weights,
+    values,
+    controls,
   }
-},
-actions = {
-  mapmode,
-  io: {
-    available,
-    select: {
-      inputs,
-      outputs,
+}
+
+const inputAction = item => {
+  const {index, value} = item
+  const isNote = item.midi.type === 0
+  const {weights, values, controls, parameters} = store.getState().mapping
+  const controlColumn = matrix.controls.get(weights, index)
+  controls[index] = item
+  for (let i = 0; i < controlColumn.length; i++) {
+    if (controlColumn[i] !== 0) {
+      values[i][index] = controlColumn[i] * value
+      let outputValue = 0
+      outputValue = matrix.output.add(values, i)
+      outputValue = isNote ? Math.ceil(outputValue) : outputValue
+      if (parameters[i].value !== outputValue) {
+        parameters[i].value = outputValue
+        output(parameters[i])
+      }
     }
-  },
-  mapping: {
-    save,
-    rename,
-    ...editMapping,
   }
+
+  return {
+    type: 'INPUT',
+    controls,
+    parameters,
+    values,
+  }
+}
+
+const actions = {
+  mapping: {
+    input: inputAction,
+    ...axisEdit,
+    edit,
+  },
+  ...appActions,
 }
 
 export default actions

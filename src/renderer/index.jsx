@@ -9,12 +9,11 @@ import { Provider } from 'react-redux'
 import store from './store'
 
 import startMIDI from './initMIDI'
-import { io, map } from './test'
+import { io, map } from './init'
 
 startMIDI().then(() => {
-  // test init
   io()
-  map()
+  map(2)
 })
 
 // import { ipcRenderer } from 'electron'

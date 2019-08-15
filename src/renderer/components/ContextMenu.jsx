@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
@@ -23,13 +23,23 @@ const ContextMenu = props => {
   const id = useSelector(state => state.mapping[props.type][props.index].id),
   speedState = useSelector(state => state.mapping[props.type][props.index].speed.state),
   normalize = useSelector(state => state.mapping[props.type][props.index].speed.normalize),
+  max = useSelector(state => state.mapping[props.type][props.index].speed.max),
   dispatch = useDispatch(),
   midiData = midiParse(fromID(id)),
   isControl = props.type === 'controls',
   change = dataType => ({target: {value}}) => {
     dispatch(actions.mapping[props.type].edit({index: props.index, id: toID(midiFormat({...midiData, [dataType]: value}))}))
   },
+  handleSpeed = (event, value) => dispatch(actions.mapping[props.type].edit({index: props.index, speed: {state: value, normalize: value}})),
+  handleNormalize = (event, value) => dispatch(actions.mapping[props.type].edit({index: props.index, speed: {normalize: value}})),
   [remap, setRemap] = useState(false)
+  
+  useEffect(() => {
+    props.open === true ?
+    max === 0 && handleNormalize(null, true) :
+    normalize === true && handleNormalize(null, false)
+  }, [props.open])
+  
   return (
     <List style={{width: 360}}>
     <ListItem>
@@ -100,7 +110,7 @@ const ContextMenu = props => {
               control={<Checkbox color="primary"/>}
               label="Speed"
               labelPlacement="end"
-              onChange={(event, value) => dispatch(actions.mapping[props.type].edit({index: props.index, speed: {state: value, normalize: value}}))}
+              onChange={handleSpeed}
             />
           } />
           <ListItemSecondaryAction>
@@ -112,11 +122,11 @@ const ContextMenu = props => {
                   label="Normalize"
                   labelPlacement="end"
                   checked={normalize}
-                  onChange={(event, value) => dispatch(actions.mapping[props.type].edit({index: props.index, speed: {normalize: value}}))}
+                  onChange={handleNormalize}
                 />
             }
             <IconButton>
-              <AddCircleIcon />
+              <AddCircleIcon/>
             </IconButton>
           </ListItemSecondaryAction>
         </ListItem>

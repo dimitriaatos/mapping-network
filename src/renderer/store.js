@@ -1,66 +1,48 @@
+import { deepMerge } from './helpers/functions'
 import {combineReducers, createStore} from 'redux'
-import Mapping, { Matrices } from './helpers/mappingClass'
+import appStore from './appStore'
 
-const io = (state, action) => {
+const mappingRed = (state, action) => {
   state = state || {
-    selected: {
-      inputs: {},
-      outputs: {},
-    },
-    available: {
-      inputs: [],
-      outputs: [],
-    },
-    // feedback contains MIDI outputs that correspond to the selected midi inputs
-    // these are usefull for sending feedback to the MIDI controler
-    feedback: {},
+    weights: [],
+    values: [],
+    controls: [],
+    parameters: [],
+    columns: 0,
   }
-  switch (action.type) {
-    case 'IO::SELECT_INPUTS':
-      return {...state, selected: {...state.selected, inputs: action.inputs}}
-    case 'IO::SELECT_OUTPUTS':
-      return {
-        ...state,
-        selected: {...state.selected, outputs: action.outputs},
-        feedback: state.available.inputs.find(inputs => inputs.name == action.outputs.name || inputs.id == action.outputs.id),        
-      }
-    case 'IO::AVAILABLE':
-      return {...state, available: action.io}
-    default:
-      return state
-  }
-},
-mapmode = (state = false, action) => {
-  if (action.type === 'MAP_MODE') {
-    return action.mode
-  } else {
-    return state
-  }
-},
-mapping = (state, action) => {
-  state = state || new Mapping()
+  const {item, axis, controls, parameters, weights, values, columns} = action
+
   switch (action.type) {
     case 'MAPPING::ADD':
     case 'MAPPING::DELETE':
-      state.weights = new Matrices(action.weights)
-      state[action.axis] = action[action.axis]
-      return new Mapping(state)
-    case 'MAPPING::RENAME':
-      return action.mapping
+      return {
+        ...state,
+        weights,
+        values,
+        columns,
+        [axis]: action[action.axis]
+      }
+    case 'MAPPING::EDIT':
+      deepMerge(state[axis][item.index], item)
+      return {...state, [axis]: [...state[axis]]}
+
+    case 'INPUT':
+      return {...state, controls: [...controls], parameters: [...parameters], values: action.values}
+      
     case 'MAPPING':
-      return new Mapping({ ...state, weights: new Matrices(action.weights) })
+      return {...state, weights: [...weights], values: values, controls: [...controls]}
     default:
       return state
   }
 }
 
-const reducer = combineReducers({io, mapmode, mapping})
+const reducer = combineReducers({...appStore, mapping: mappingRed})
 
 const store = createStore(reducer)
 
-store.subscribe(() => {
-  const state = store.getState();
-  console.dir(state.mapping)
-})
+// store.subscribe(() => {
+//   const state = store.getState()
+//   console.dir(state.mapping)
+// })
 
 export default store

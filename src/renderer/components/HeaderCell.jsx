@@ -1,8 +1,7 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { plural, clip } from '../helpers/functions'
-import actions from '../actions'
-import mapping from './../mapping'
+import { clip } from './../helpers/functions'
+import actions from './../actions'
 import { table } from './sty'
 
 import IconButton from '@material-ui/core/IconButton'
@@ -12,41 +11,43 @@ import DirectionsRunIcon from '@material-ui/icons/DirectionsRun'
 // import Tooltip from '@material-ui/core/Tooltip'
 import Popover from '@material-ui/core/Popover'
 import ContextMenu from './ContextMenu'
-import { makeTitle } from '../helpers/midi'
+import { makeTitle } from './../helpers/midi'
+import { output, input } from './../iofunctions'
 
 const HeaderCell = props => {
-  const types = plural(props.type),
-    id = useSelector(state => state.mapping[types][props.index].id),
-    name = useSelector(state => state.mapping[types][props.index].name) || makeTitle({id}).short,
-  // description = useSelector(state => state.mapping[types][props.index].description),
+    const {id, value} = props.data,
+    name = props.data.name || makeTitle({id}).short,
+    speedState = props.data.speed.state,
     mapmode = useSelector(state => state.mapmode),
-    speedState = useSelector(state => state.mapping[types][props.index].speed.state),
     dispatch = useDispatch(),
     changeName = ({currentTarget: {value}}) => {
-      dispatch(actions.mapping.rename({axis: plural(props.type), index: props.index, value}))
+      dispatch(actions.mapping[props.type].edit({index: props.index, name: value}))
     },
-    remove = () => dispatch(actions.mapping[types].delete(props.index)),
+    remove = () => dispatch(actions.mapping[props.type].delete({index: props.index})),
     [editable, setEditable] = useState(false),
     test = useRef(null),
-    sendTest = value => {
+    changeColor = value => {
       const scaled = (1 - value) * 255
       test.current.style.backgroundColor = `rgb(${[scaled, scaled, scaled]})`
-      mapping[props.type === 'control' ? 'input' : 'output'](
-        {id: mapping[plural(props.type)][props.index].id},
+    },
+    sendTest = value => {
+      props.data.value = value
+      const data = [
+        props.data,
         value,
         window.performance.now(),
-      )
+      ]
+      ;(props.type === 'controls' ? input : output)(...data)
     },
     testInteraction = mouseDownEvent => {
       const initY = mouseDownEvent.clientY,
-        initValue = props.type == 'control' ? mapping.controls[props.index].value : 0.5,
+        initValue = value,
         dragging = draggingEvent => {
           const value = clip((initY - draggingEvent.clientY) * 0.006 + initValue)
           sendTest(value)
         },
         mouseup = () => {
-          // sendTest(initValue)
-          // test.current.style.backgroundColor = 'white'
+          props.type === 'parameters' && sendTest(initValue)
           document.body.style.cursor = 'default'
           document.removeEventListener('mousemove', dragging)
           document.removeEventListener('mouseup', mouseup)
@@ -62,6 +63,8 @@ const HeaderCell = props => {
       event.preventDefault()
       setMenu(true)
     }
+    
+    useEffect(() => {changeColor(props.data.value)}, [props.data.value])
   return (
     <>
       {/* <Tooltip
@@ -89,7 +92,7 @@ const HeaderCell = props => {
             /> :
             <span style={table.name} >{name}</span>
           }
-          <div ref={test} style={table[types]}></div>
+          <div ref={test} style={table[props.type]}></div>
           <Popover 
             anchorOrigin={{
               vertical: 'bottom',
@@ -104,7 +107,8 @@ const HeaderCell = props => {
             anchorEl={test.current}
           >
             <ContextMenu
-              type={types}
+              open={menu}
+              type={props.type}
               index={props.index}
             />
           </Popover>

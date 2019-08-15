@@ -16,6 +16,7 @@
 // }
 
 const absolute = (row, c, value) => {
+  value = row.length < 2 ? 1 : value
   const oldValue = row.splice(c, 1)[0]
   if (oldValue == 1) {
     for (let i = 0; i < row.length; i++) {

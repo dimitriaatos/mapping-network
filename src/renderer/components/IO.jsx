@@ -34,7 +34,10 @@ const IO = props => {
     handleClose = () => setOpen(false),
     [tab, setTab] = useState('inputs'),
     changeTab = (event, tab) => setTab(tab),
-    handleOpen = type => {setOpen(true); setTab(type)}
+    handleOpen = type => {
+      setOpen(true)
+      setTab(type)
+    }
 
   return (
     <>

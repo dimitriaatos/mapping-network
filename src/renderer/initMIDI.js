@@ -2,7 +2,7 @@ import actions from './actions'
 import store from './store'
 import { toID } from './helpers/midi'
 import { Change } from './helpers/classes'
-import mapping from './mapping'
+import { input } from './iofunctions'
 
 const getIO = midiAccess => (
   ['inputs', 'outputs'].reduce((accum, key) => {
@@ -40,7 +40,7 @@ document.addEventListener('midiIn', event => {
   const [id, value] = parseMIDI(event),
   state = store.getState(),
   { mapmode } = state,
-  parameterIsMapped = mapping.controls.some(item => item.id === id)
+  parameterIsMapped = state.mapping.controls.some(item => item.id === id)
   // if the midi id is different than the previous one, and mapmode is on, and the id is not allready mapped
   if (newControl.check(id) && mapmode && !parameterIsMapped){
     // add a new column
@@ -48,7 +48,7 @@ document.addEventListener('midiIn', event => {
     // if the mapmode is off and the midi id is mapped
   } else if (!mapmode && parameterIsMapped) {
     // send a value to the mapper matrix
-    mapping.input({id}, value / 127, event.timeStamp)
+    input({id, value: value / 127}, event.timeStamp)
   }
 })
 

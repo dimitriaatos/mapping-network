@@ -7,28 +7,6 @@ const Change = class {
   }
 }
 
-const Counter = class {
-  constructor(init = 0, excludeList = []) {
-    this.init = init
-    this.value = init
-    this.excludeList = excludeList
-  }
-  next() {
-    this.value += 1
-    while (this.excludeList.includes(this.value)) {
-      this.value += 1
-    }
-    return this.value
-  }
-  reset() {
-    return this.value = this.init
-  }
-  exclude(list) {
-    this.excludeList = list
-    return this
-  }
-}
-
 import { clip } from './functions'
 
 /**
@@ -46,7 +24,7 @@ const Speed = class {
   }
 
   /** @property {number} smooth - set smoothing of speed */
-  smooth = 30
+  smooth = 10000
   /** @property {number} max - set maximum raw speed that outputs 1 */
   max = 0
   state = false
@@ -58,6 +36,7 @@ const Speed = class {
   #normalize = false
   #raw = 0
   #output
+  #timeInterval
 
   /**
    * input 
@@ -68,9 +47,11 @@ const Speed = class {
   input(value, time) {
     if (this.state) {
       if (this.#active) {
-        this.#raw = Math.abs(this.#value - value)/(time - this.#time) || this.#raw
+        this.#timeInterval = time - this.#time
+        this.#raw = Math.abs(this.#value - value) / this.#timeInterval || this.#raw
         if (this.#normalize) {
           this.max = Math.max(this.max, this.#raw)
+          this.smooth = Math.min(this.smooth, this.#timeInterval || this.smooth) + 10
         } else this.#output(clip(this.#raw / this.max))
         clearTimeout(this.#stop)
         this.#stop = setTimeout(() => {
@@ -92,7 +73,10 @@ const Speed = class {
     return this.#normalize
   }
   set normalize(mode) {
-    mode && (this.max = 0)
+    if (mode) {
+      this.max = 0
+      this.smooth = 10000
+    }
     this.#normalize = mode
   }
 }

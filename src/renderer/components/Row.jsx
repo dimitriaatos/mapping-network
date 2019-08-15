@@ -2,14 +2,13 @@ import React from 'react'
 import Cell from './Cell'
 import HeaderCell from './HeaderCell'
 import { clip } from './../helpers/functions'
-import mapping from './../mapping'
 import { table, cellSize } from './sty'
 import { useDispatch } from 'react-redux'
 import IO from './IO'
 
 // import IO from './IO'
 import AddButton from './AddButton'
-import actions from '../actions';
+import actions from './../actions'
 
 const Row = props => {
   const dispatch = useDispatch(),
@@ -31,7 +30,11 @@ const Row = props => {
       }
       <th>
         <div style={table.row}>
-          <HeaderCell type="parameter" index={props.index} />
+          <HeaderCell
+            type="parameters"
+            index={props.index}
+            data={props.data}
+          />
         </div>
       </th>
       {
@@ -44,16 +47,13 @@ const Row = props => {
               const initValue = props.value[c],
                 dragging = event => {
                   props.onChange(
-                      mapping.edit(
-                        props.index,
-                        c,
-                        clip((initY - event.clientY) * 0.006 + initValue),
-                      ),
-                      props.index
+                    props.index,
+                    c,
+                    clip((initY - event.clientY) * 0.006 + initValue),
                   )
                 },
                 mouseup = () => {
-                  props.onChangeStop()
+                  // props.onChangeStop()
                   document.removeEventListener('mousemove', dragging)
                   document.removeEventListener('mouseup', mouseup)
                 }
