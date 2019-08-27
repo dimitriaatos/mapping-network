@@ -13,58 +13,69 @@ import Popover from '@material-ui/core/Popover'
 import ContextMenu from './ContextMenu'
 import { makeTitle } from './../helpers/midi'
 import { output, input } from './../iofunctions'
+import { isNote } from '../helpers/actionHelpers'
 
 const HeaderCell = props => {
+  
+    // Data: id, value, name, speedState, mapmode
     const {id, value} = props.data,
-    name = props.data.name || makeTitle({id}).short,
-    speedState = props.data.speed.state,
-    mapmode = useSelector(state => state.mapmode),
-    dispatch = useDispatch(),
-    changeName = ({currentTarget: {value}}) => {
-      dispatch(actions.mapping[props.type].edit({index: props.index, name: value}))
-    },
-    remove = () => dispatch(actions.mapping[props.type].delete({index: props.index})),
-    [editable, setEditable] = useState(false),
-    test = useRef(null),
-    changeColor = value => {
-      const scaled = (1 - value) * 255
-      test.current.style.backgroundColor = `rgb(${[scaled, scaled, scaled]})`
-    },
-    sendTest = value => {
-      props.data.value = value
-      const data = [
-        props.data,
-        value,
-        window.performance.now(),
-      ]
-      ;(props.type === 'controls' ? input : output)(...data)
-    },
-    testInteraction = mouseDownEvent => {
-      const initY = mouseDownEvent.clientY,
-        initValue = value,
-        dragging = draggingEvent => {
-          const value = clip((initY - draggingEvent.clientY) * 0.006 + initValue)
-          sendTest(value)
-        },
-        mouseup = () => {
-          props.type === 'parameters' && sendTest(initValue)
-          document.body.style.cursor = 'default'
-          document.removeEventListener('mousemove', dragging)
-          document.removeEventListener('mouseup', mouseup)
-        }
-      sendTest(initValue)
-      document.body.style.cursor = 'ns-resize'
-      document.addEventListener('mousemove', dragging)
-      document.addEventListener('mouseup', mouseup)
-    },
-    blur = event => event.keyCode === 27 && event.target.blur(), //Esc
-    [menu, setMenu] = useState(false),
-    controlMenu = event => {
-      event.preventDefault()
-      setMenu(true)
-    }
+      name = props.data.name,
+      speedState = props.data.speed.state,
+      mapmode = useSelector(state => state.mapmode.global)
+
+    // Dispatch
+    const dispatch = useDispatch()
+
+    // State: editable, menu
+    const [editable, setEditable] = useState(false),
+    [menu, setMenu] = useState(false)
+
+    // Refs: 
+    const testPrevObj = useRef(null)
+
+    // Actions: changeName, remove, test, handleMouseDown
+    const changeName = ({currentTarget: {value}}) => {
+        dispatch(actions.mapping[props.type].edit({index: props.index, name: value}))
+      },
+      blur = event => event.keyCode === 27 || event.keyCode === 13 && event.target.blur(), //Esc & Enter
+
+      remove = () => dispatch(actions.mapping[props.type].delete({index: props.index})),
+      test = value => {
+        props.data.value = value
+        const data = [
+          isNote(props.data),
+          window.performance.now(),
+        ]
+        ;(props.type === 'controls' ? input : output)(...data)
+      },
+      handleMouseDown = mouseDownEvent => {
+        const initY = mouseDownEvent.clientY,
+          initValue = value,
+          dragging = draggingEvent => {
+            const value = clip((initY - draggingEvent.clientY) * 0.006 + initValue)
+            test(value)
+          },
+          mouseup = () => {
+            props.type === 'parameters' && test(initValue)
+            document.body.style.cursor = 'default'
+            document.removeEventListener('mousemove', dragging)
+            document.removeEventListener('mouseup', mouseup)
+          }
+        // test(initValue)
+        document.body.style.cursor = 'ns-resize'
+        document.addEventListener('mousemove', dragging)
+        document.addEventListener('mouseup', mouseup)
+      },
+      controlMenu = event => {
+        event.preventDefault()
+        setMenu(true)
+      }
     
-    useEffect(() => {changeColor(props.data.value)}, [props.data.value])
+    // Change color
+    useEffect(() => {
+      const scaled = (1 - props.data.value) * 255
+      testPrevObj.current.style.backgroundColor = `rgb(${[scaled, scaled, scaled]})`
+    }, [props.data.value])
   return (
     <>
       {/* <Tooltip
@@ -73,9 +84,12 @@ const HeaderCell = props => {
         enterDelay={800}
       > */}
         <div
-          style={{...table.nameContainer, backgroundColor: menu ? 'grey' : 'white'}}
+          style={
+            {...table.nameContainer, backgroundColor: menu ? 'grey' : 'white',
+            '&:hover': {backgroundColor: 'grey'}}
+          }
           onDoubleClick={() => setEditable(true)}
-          onMouseDown={testInteraction}
+          onMouseDown={handleMouseDown}
           onContextMenu={controlMenu}
         >
           {speedState && <DirectionsRunIcon style={{width: 10, position: 'absolute', top: 0, right: 0}}/>}
@@ -90,9 +104,9 @@ const HeaderCell = props => {
               autoFocus={true}
               onKeyDown={blur}
             /> :
-            <span style={table.name} >{name}</span>
+            <span style={table.name} >{name || makeTitle({id}).short}</span>
           }
-          <div ref={test} style={table[props.type]}></div>
+          <div ref={testPrevObj} style={table[props.type]}></div>
           <Popover 
             anchorOrigin={{
               vertical: 'bottom',
@@ -104,7 +118,7 @@ const HeaderCell = props => {
             }}
             open={menu}
             onClose={() => setMenu(false)}
-            anchorEl={test.current}
+            anchorEl={testPrevObj.current}
           >
             <ContextMenu
               open={menu}

@@ -24,9 +24,10 @@ const io = (state, action) => {
   }
 }
 
-const mapmode = (state = false, action) => {
+const mapmode = (state = {global: false, local: -1}, action) => {
   if (action.type === 'MAP_MODE') {
-    return action.mode
+    action.mode.local === state.local && (action.mode.local = -1)
+    return {...state, ...action.mode}
   } else {
     return state
   }

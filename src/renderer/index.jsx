@@ -1,9 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Router } from 'react-router-static'
+// import { Router } from 'react-router-static'
 
 import App from './components/App'
-import OnTop from './components/OnTop'
 
 import { Provider } from 'react-redux'
 import store from './store'
@@ -13,21 +12,17 @@ import { io, map } from './init'
 
 startMIDI().then(() => {
   io()
-  map(2)
+  map(1)
 })
 
-// import { ipcRenderer } from 'electron'
-// import actions from './actions'
-// ipcRenderer.on('mapmode', (event, mode) => store.dispatch(actions.mapmode(mode)))
-
-const routes = {
-  default: App,
-  ontop: OnTop,
-}
+// const routes = {
+//   default: App,
+// }
 
 ReactDOM.render(
   <Provider store={store}>
-    <Router routes={routes} />
+    <App/>
+    {/* <Router routes={routes} /> */}
   </Provider>,
   document.getElementById('app')
 )

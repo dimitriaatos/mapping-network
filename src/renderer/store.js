@@ -22,15 +22,21 @@ const mappingRed = (state, action) => {
         columns,
         [axis]: action[action.axis]
       }
+
     case 'MAPPING::EDIT':
       deepMerge(state[axis][item.index], item)
       return {...state, [axis]: [...state[axis]]}
 
     case 'INPUT':
       return {...state, controls: [...controls], parameters: [...parameters], values: action.values}
-      
+
+    case 'OUTPUT':
+      state.parameters[item.index] = item
+      return {...state, parameters: [...state.parameters]}
+          
     case 'MAPPING':
       return {...state, weights: [...weights], values: values, controls: [...controls]}
+
     default:
       return state
   }
@@ -42,7 +48,7 @@ const store = createStore(reducer)
 
 // store.subscribe(() => {
 //   const state = store.getState()
-//   console.dir(state.mapping)
+//   console.dir(state)
 // })
 
 export default store

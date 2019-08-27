@@ -1,6 +1,6 @@
 import store from './store'
 import appActions from './appActions'
-import { output } from './iofunctions'
+import { pureOutput } from './iofunctions'
 import matrix from './helpers/matrixFunctions'
 import { initItem } from './helpers/actionHelpers'
 
@@ -10,15 +10,22 @@ const change = axis => ['add', 'delete'].reduce((accum, act) => {
     const isControl = axis === 'controls' && !typeBool
     const state = store.getState().mapping
     const inItem = initItem(item, axis, state)
-    
+  
+    // edit io item arrays
+    if (typeBool) {
+      state[axis].splice(inItem.index, 0, inItem)
+    }
+    else {
+      state[axis].splice(inItem.index, 1)
+    }
+    state[axis] = state[axis].map((item, index) => ({...item, index}))
+
     if (isControl) state.weights = state.weights.map((row, r) => {
       return matrix.edit(state.weights, r, inItem.index, 0)
     })
-  
-    typeBool ? state[axis].splice(inItem.index, 0, inItem) :
-    state[axis].splice(inItem.index, 1)
-    const [weights, columns] = matrix[axis][act](state.weights, state.columns, true)
-    const [values] = matrix[axis][act](state.values, state.columns)
+
+    const [weights, columns] = matrix[axis][act](state.weights, state.columns, inItem.index, true)
+    const [values] = matrix[axis][act](state.values, state.columns, inItem.index)
 
     if (isControl) {
       values.forEach((row, r) => {
@@ -26,7 +33,7 @@ const change = axis => ['add', 'delete'].reduce((accum, act) => {
           (item, index) => item.value * weights[r][index]
         )
         state.parameters[r].value = matrix.output.add(values, r)
-        output(state.parameters[r])
+        pureOutput(state.parameters[r])
       })
     }
 
@@ -48,7 +55,7 @@ const axisEdit = ['parameters', 'controls'].reduce((accum, axis) => {
     edit: item => {
       return {
         type: 'MAPPING::EDIT',
-        item,
+        item: initItem(item, axis, store.getState().mapping),
         axis,
       }
     },
@@ -72,21 +79,33 @@ const edit = (r, c, value) => {
   }
 }
 
-const inputAction = item => {
+const input = item => {
+
   const {index, value} = item
-  const isNote = item.midi.type === 0
   const {weights, values, controls, parameters} = store.getState().mapping
-  const controlColumn = matrix.controls.get(weights, index)
+
+  // column of weights for the given controls
+  const controlWeights = matrix.controls.get(weights, index)
+
   controls[index] = item
-  for (let i = 0; i < controlColumn.length; i++) {
-    if (controlColumn[i] !== 0) {
-      values[i][index] = controlColumn[i] * value
+
+  // for every non zero weight
+  for (let i = 0; i < controlWeights.length; i++) {
+    if (controlWeights[i] !== 0) {
+      values[i][index] = controlWeights[i] * value
       let outputValue = 0
+      // calculate output value
       outputValue = matrix.output.add(values, i)
-      outputValue = isNote ? Math.ceil(outputValue) : outputValue
+
+      // if output is a MIDI Note make its value boolean
+      outputValue = parameters[i].midi.type === 0 ?
+        Math.ceil(outputValue) :
+        outputValue
+
+      // trigger output only of the value is changed
       if (parameters[i].value !== outputValue) {
         parameters[i].value = outputValue
-        output(parameters[i])
+        pureOutput(parameters[i])
       }
     }
   }
@@ -99,9 +118,17 @@ const inputAction = item => {
   }
 }
 
+const output = item => {
+  return {
+    type: 'OUTPUT',
+    item,
+  }
+}
+
 const actions = {
   mapping: {
-    input: inputAction,
+    input,
+    output,
     ...axisEdit,
     edit,
   },

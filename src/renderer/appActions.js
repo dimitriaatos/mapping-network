@@ -1,13 +1,17 @@
 import store from './store'
+import { newControl } from './initMIDI'
 
-const mapmode = mode => {
-  const state = store.getState()
-  if (state.mapmode !== mode) {
-    return ({
-    type: 'MAP_MODE',
-    mode,
-    })
-  } else return {type: 'none'}
+const mapmode = {
+  ...['local', 'global'].reduce((accum, type) => {
+    accum[type] = mode => {
+      newControl.reset()
+      return ({
+        type: 'MAP_MODE',
+        mode: {[type]: mode},
+      })
+    }
+    return accum
+  }, {})
 }
 
 const findIO = query => {

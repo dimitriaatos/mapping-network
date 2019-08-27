@@ -1,43 +1,72 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 // import ListItemIcon from '@material-ui/core/ListItemIcon'
-import Checkbox from '@material-ui/core/Checkbox'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
-import AddCircleIcon from '@material-ui/icons/AddCircle'
+// import AddCircleIcon from '@material-ui/icons/AddCircle'
 import MenuItem from '@material-ui/core/MenuItem'
 import { midiParse, fromID, midiFormat, toID } from '../helpers/midi'
 import TextField from '@material-ui/core/TextField'
 import SettingsInputSvideoIcon from '@material-ui/icons/SettingsInputSvideo'
-// import DeleteIcon from '@material-ui/icons/Delete'
+import DeleteIcon from '@material-ui/icons/Delete'
 import IconButton from '@material-ui/core/IconButton'
 import SettingsInputSvideoIconFilled from './SettingsInputSvideoIconFilled'
 
 import { useDispatch, useSelector } from 'react-redux'
 import actions from '../actions'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import Switch from '@material-ui/core/Switch'
+
+import Speed from './Speed'
 
 const ContextMenu = props => {
+  // Data: id, speedState, normalize, max
   const id = useSelector(state => state.mapping[props.type][props.index].id),
   speedState = useSelector(state => state.mapping[props.type][props.index].speed.state),
   normalize = useSelector(state => state.mapping[props.type][props.index].speed.normalize),
+  smooth = useSelector(state => state.mapping[props.type][props.index].speed.smooth),
   max = useSelector(state => state.mapping[props.type][props.index].speed.max),
-  dispatch = useDispatch(),
-  midiData = midiParse(fromID(id)),
-  isControl = props.type === 'controls',
-  change = dataType => ({target: {value}}) => {
-    dispatch(actions.mapping[props.type].edit({index: props.index, id: toID(midiFormat({...midiData, [dataType]: value}))}))
+  localMap = useSelector(state => state.mapmode.local)
+
+  // Dispatch
+  const dispatch = useDispatch()
+
+  // Calculated data
+  const midiData = midiParse(fromID(id)),
+  isControl = props.type === 'controls'
+
+  // Actions
+  const change = dataType => ({target: {value}}) => {
+    dispatch(actions.mapping[props.type].edit({
+      index: props.index,
+      id: toID(midiFormat({
+        ...midiData,
+        [dataType]: value,
+      }))
+    }))
   },
-  handleSpeed = (event, value) => dispatch(actions.mapping[props.type].edit({index: props.index, speed: {state: value, normalize: value}})),
-  handleNormalize = (event, value) => dispatch(actions.mapping[props.type].edit({index: props.index, speed: {normalize: value}})),
-  [remap, setRemap] = useState(false)
-  
+  speed = dataType => value => {
+    const state = dataType === 'state' ? {normalize: value} : {}
+    dispatch(actions.mapping[props.type].edit({
+      index: props.index,
+      speed: {
+        [dataType]: value,
+        ...state,
+      }
+    }))
+  },
+  toggleLocalMap = () => {
+    dispatch(actions.mapmode.local(props.index))
+  }
+
+  // State changes triggered by menu opening
   useEffect(() => {
-    props.open === true ?
-    max === 0 && handleNormalize(null, true) :
-    normalize === true && handleNormalize(null, false)
+    // open and close normalization mode with the menu
+    // if speed is enabled but not normalized yet
+    speedState && props.open &&
+    speed('normalize')(max === 0 ? true : normalize === true && false)
+
+    // close local mapmode with the menu if it is open
+    !props.open && localMap === props.index && toggleLocalMap()
   }, [props.open])
   
   return (
@@ -85,53 +114,19 @@ const ContextMenu = props => {
           isControl && (
             <ListItemSecondaryAction>
             <IconButton
-              onClick={() => {setRemap(state => !state)}}
+              onClick={toggleLocalMap}
             >
               {
-              remap ?
-              <SettingsInputSvideoIconFilled/> :
-              <SettingsInputSvideoIcon />
+                localMap === props.index ?
+                <SettingsInputSvideoIconFilled/> :
+                <SettingsInputSvideoIcon />
               }
             </IconButton>
           </ListItemSecondaryAction>
           )
         }
     </ListItem>
-    {
-      isControl && (
-        <ListItem>
-          {/* <ListItemIcon>
-
-          </ListItemIcon> */}
-          <ListItemText primary={
-            <FormControlLabel
-              value="Speed"
-              checked={speedState}
-              control={<Checkbox color="primary"/>}
-              label="Speed"
-              labelPlacement="end"
-              onChange={handleSpeed}
-            />
-          } />
-          <ListItemSecondaryAction>
-            {
-              speedState && 
-                <FormControlLabel
-                  value="Normalize"
-                  control={<Switch color="primary"/>}
-                  label="Normalize"
-                  labelPlacement="end"
-                  checked={normalize}
-                  onChange={handleNormalize}
-                />
-            }
-            <IconButton>
-              <AddCircleIcon/>
-            </IconButton>
-          </ListItemSecondaryAction>
-        </ListItem>
-      )
-    }
+    { isControl && <Speed {...{isControl, speedState, speed, smooth, normalize}}/>}
     {/* <ListItem>
       <ListItemText primary={
         <IconButton>

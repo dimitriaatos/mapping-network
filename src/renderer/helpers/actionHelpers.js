@@ -5,7 +5,7 @@ const itemMidi = item => {
   const midi = {}
   midi.midi = midiParse(fromID(item.id))
   midi.description = makeTitle(item).long
-  return midi
+  return {...item, ...midi}
 }
 
 const newID = (axis, state) => {
@@ -16,18 +16,38 @@ const newID = (axis, state) => {
   return value
 }
 
-const initItem = (itemIn, axis, state) => {
-  const item = {
+const findExisting = (itemIn, axis, state) => {
+  // if itemIn has a valid index
+  if (itemIn.index !== undefined && itemIn.index < state[axis].length) {
+    // return the existing item
+    return state[axis][itemIn.index]
+    // else if there is an id
+  } else if (itemIn.id !== undefined) {
+    // check if it is already mapped,
+    // if it is return the existing item otherwise create a new idex
+    const index = state[axis].findIndex(item => item.id == itemIn.id)
+    return {index: index === -1 ? state[axis].length : index}
+  } else return {index: state[axis].length}
+}
+
+const initItem = (itemIn = {}, axis, state) => {
+
+  const foundItem = findExisting(itemIn, axis, state)
+
+  const defaultItem = {
     id: newID(axis, state),
-    index: state[axis].length,
     value: 0,
     description: '',
     name: '',
     speed: new Speed(),
   }
-  Object.assign(item, itemIn)
-  Object.assign(item, itemMidi(item))
+
+  return itemMidi(Object.assign({}, defaultItem, foundItem, itemIn))
+}
+
+const isNote = item => {
+  item.midi.type === 0 && (item.value = Math.ceil(item.value))
   return item
 }
 
-export { initItem }
+export { initItem, isNote }

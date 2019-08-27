@@ -1,10 +1,11 @@
 {
-  "name": "mapnet",
+  "name": "mappingnetwork",
   "version": "1.0.0",
   "description": "",
-  "main": "src/main/index.js",
   "scripts": {
-    "start": "electron-webpack dev"
+    "start": "electron-webpack dev",
+    "compile": "electron-webpack",
+    "build": "npm run compile && electron-builder"
   },
   "author": "Dimitri Aatos Ellinas",
   "license": "ISC",
@@ -14,26 +15,28 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.5.5",
     "@babel/plugin-proposal-private-methods": "^7.4.4",
     "@babel/preset-react": "^7.0.0",
-    "babel-eslint": "^10.0.2",
+    "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
-    "css-loader": "^3.1.0",
+    "css-loader": "^3.2.0",
+    "electron": "^3.1.13",
+    "electron-builder": "^21.2.0",
     "electron-webpack": "^2.7.4",
-    "eslint": "^6.1.0",
+    "eslint": "^6.2.2",
     "eslint-config-google": "^0.13.0",
     "eslint-plugin-private-props": "^0.3.0",
     "eslint-plugin-react": "^7.14.3",
     "style-loader": "^0.23.1",
-    "webpack": "^4.39.1",
-    "webpack-cli": "^3.3.6"
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.7"
   },
   "dependencies": {
-    "@material-ui/core": "^4.3.1",
+    "@material-ui/core": "^4.3.3",
     "@material-ui/icons": "^4.2.1",
-    "electron": "^3.1.13",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-redux": "^7.1.0",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "react-redux": "^7.1.1",
     "react-router-static": "^1.0.0",
-    "redux": "^4.0.4"
+    "redux": "^4.0.4",
+    "source-map-support": "^0.5.13"
   }
 }

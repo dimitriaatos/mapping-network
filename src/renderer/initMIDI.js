@@ -41,16 +41,23 @@ document.addEventListener('midiIn', event => {
   state = store.getState(),
   { mapmode } = state,
   parameterIsMapped = state.mapping.controls.some(item => item.id === id)
-  // if the midi id is different than the previous one, and mapmode is on, and the id is not allready mapped
-  if (newControl.check(id) && mapmode && !parameterIsMapped){
-    // add a new column
-    store.dispatch(actions.mapping.controls.add({id}))
-    // if the mapmode is off and the midi id is mapped
-  } else if (!mapmode && parameterIsMapped) {
-    // send a value to the mapper matrix
-    input({id, value: value / 127}, event.timeStamp)
+  // if local map mode is on
+  if (mapmode.local !== -1) {
+    store.dispatch(actions.mapping.controls.edit({id, index: state.mapmode.local}))
+  } else {
+    // if the midi id is different than the previous one,
+    // and mapmode is on,
+    // and the id is not already mapped
+    if (mapmode.global && !parameterIsMapped && newControl.check(id)){
+      // add a new column
+      store.dispatch(actions.mapping.controls.add({id}))
+      // if the mapmode is off and the midi id is mapped
+    } else if (!mapmode.global && parameterIsMapped) {
+      // send a value to the mapper matrix
+      input({id, value: value / 127}, event.timeStamp)
+    }
   }
 })
 
 export default startMIDI
-export { refreshMIDI }
+export { refreshMIDI, newControl }

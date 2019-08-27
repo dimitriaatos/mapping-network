@@ -42,8 +42,8 @@ const IO = props => {
   return (
     <>
       <Button onClick={() => handleOpen(props.type)} >{props.type}</Button>
-      <Modal open={open} onClose={handleClose} style={{alignItems:'center', justifyContent:'center'}} >
-        <Card style={{width: '500px', margin: 'auto'}}>
+      <Modal open={open} onClose={handleClose} style={{display: 'flex', alignItems:'center', justifyContent:'center'}} >
+        <Card style={{width: '500px', margin: 'auto', outline: 'none'}}>
           <CardContent>
             <AppBar position="static">
               <Toolbar>

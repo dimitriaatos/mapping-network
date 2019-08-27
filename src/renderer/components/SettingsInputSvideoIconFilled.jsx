@@ -5,8 +5,6 @@ const SettingsInputSvideoIconFilled = () => (
   <SvgIcon
     component={svgProps => (
       <svg {...svgProps} viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-        <title>Untitled</title>
-        <desc>Created with Sketch.</desc>
         <defs></defs>
         <g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
           <g id="baseline-settings_input_svideo-24px">
@@ -18,7 +16,7 @@ const SettingsInputSvideoIconFilled = () => (
         </g>
       </svg>
     )}
-  />
+  ><></></SvgIcon>
 )
 
 export default SettingsInputSvideoIconFilled

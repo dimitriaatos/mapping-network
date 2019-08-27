@@ -1,9 +1,14 @@
 const Change = class {
   item
+  #clear = true
   check(i) {
-    const change = this.item == i
+    const change = this.#clear ? false : this.item === i
+    this.#clear = false
     this.item = i
     return change
+  }
+  reset() {
+    this.#clear = true
   }
 }
 
@@ -24,7 +29,7 @@ const Speed = class {
   }
 
   /** @property {number} smooth - set smoothing of speed */
-  smooth = 10000
+  smooth = 100
   /** @property {number} max - set maximum raw speed that outputs 1 */
   max = 0
   state = false
@@ -51,8 +56,7 @@ const Speed = class {
         this.#raw = Math.abs(this.#value - value) / this.#timeInterval || this.#raw
         if (this.#normalize) {
           this.max = Math.max(this.max, this.#raw)
-          this.smooth = Math.min(this.smooth, this.#timeInterval || this.smooth) + 10
-        } else this.#output(clip(this.#raw / this.max))
+        } else this.#output(clip(this.#raw / this.max), this.#timeInterval)
         clearTimeout(this.#stop)
         this.#stop = setTimeout(() => {
           this.#output(0)
@@ -75,10 +79,9 @@ const Speed = class {
   set normalize(mode) {
     if (mode) {
       this.max = 0
-      this.smooth = 10000
     }
     this.#normalize = mode
   }
 }
 
-export { Change, Counter, Speed }
+export { Change, Speed }

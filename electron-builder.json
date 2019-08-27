@@ -1,0 +1,34 @@
+{
+  "appId": "com.${name}",
+  "productName": "Mapping Network",
+  "copyright": "Copyright © year ${author}",
+
+  "mac": {
+    "category": "public.app-category.music",
+    "target": [
+      "zip",
+      "dmg"
+    ],
+    "icon": "resources/macos/icon.icns",
+    "darkModeSupport": false,
+    "type": "distribution"
+  },
+
+  "dmg": {
+    "background": "resources/dmg/background.png",
+    "iconSize": 240,
+    "iconTextSize": 20,
+    "internetEnabled": false,
+    "title": "${productName} ${version}",
+    "window": {
+      "width": 574,
+      "height": 410
+    }
+  },
+
+  "win": {
+    "target": "nsis",
+    "icon": "resources/win/icon.ico"
+  }
+
+}

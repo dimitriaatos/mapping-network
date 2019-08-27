@@ -5,9 +5,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import actions from './../actions'
 
 const MapMode = () => {
-  const mapmode = useSelector(state => state.mapmode),
+  const mapmode = useSelector(state => state.mapmode.global),
     dispatch = useDispatch(),
-    changeMapMode = ({target: {checked}}) => dispatch(actions.mapmode(checked))
+    changeMapMode = ({target: {checked}}) => dispatch(actions.mapmode.global(checked))
   return (
     <Tooltip title="Mapping">
       <Switch checked={mapmode} onChange={changeMapMode} />

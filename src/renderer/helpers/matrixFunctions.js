@@ -44,7 +44,7 @@ const matrix = {
   },
 
   parameters: {
-    add: (matrix, columns, autoFill) => {
+    add: (matrix, columns, i, autoFill) => {
       const index = matrix.push(new Array(columns).fill(0))
       if (autoFill) matrix[index - 1][columns <= matrix.length ? columns - 1 : matrix.length -1] = 1
       return [[...matrix], columns]
