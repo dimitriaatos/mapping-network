@@ -1,15 +1,18 @@
-import { deepMerge } from './helpers/functions'
+import { deepMerge, oneLevelDownSpread } from './helpers/functions'
 import {combineReducers, createStore} from 'redux'
 import appStore from './appStore'
 
+const initMapping = {
+  weights: [],
+  values: [],
+  controls: [],
+  parameters: [],
+  columns: 0,
+  open: '',
+}
+
 const mappingRed = (state, action) => {
-  state = state || {
-    weights: [],
-    values: [],
-    controls: [],
-    parameters: [],
-    columns: 0,
-  }
+  state = state || oneLevelDownSpread(initMapping)
   const {item, axis, controls, parameters, weights, values, columns} = action
 
   switch (action.type) {
@@ -20,7 +23,7 @@ const mappingRed = (state, action) => {
         weights,
         values,
         columns,
-        [axis]: action[action.axis]
+        [axis]: [...action[action.axis]]
       }
 
     case 'MAPPING::EDIT':
@@ -36,7 +39,11 @@ const mappingRed = (state, action) => {
           
     case 'MAPPING':
       return {...state, weights: [...weights], values: values, controls: [...controls]}
-
+    
+    case 'OPEN':
+        action.data.open = action.filePath || ''
+      return oneLevelDownSpread(action.data)
+    
     default:
       return state
   }
@@ -46,9 +53,10 @@ const reducer = combineReducers({...appStore, mapping: mappingRed})
 
 const store = createStore(reducer)
 
-// store.subscribe(() => {
-//   const state = store.getState()
-//   console.dir(state)
-// })
+store.subscribe(() => {
+  const state = store.getState()
+  console.dir(state)
+})
 
 export default store
+export { initMapping }

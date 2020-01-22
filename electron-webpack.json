@@ -1,6 +1,7 @@
 {
   "main": {
-    "sourceDirectory": "src/main"
+    "sourceDirectory": "src/main",
+    "webpackConfig": "webpack.config.main.js"
   },
   
   "renderer": {

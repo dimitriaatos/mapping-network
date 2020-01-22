@@ -1,14 +1,17 @@
 {
   "name": "mappingnetwork",
+  "productName": "Mapping Network",
   "version": "1.0.0",
-  "description": "",
+  "description": "An app for making complex MIDI controller-to-software mappings for musical purposes.",
+  "repository": "http://github.com/dimitriaatos/mapping-network",
   "scripts": {
     "start": "electron-webpack dev",
     "compile": "electron-webpack",
     "build": "npm run compile && electron-builder"
   },
+  "year": "2019",
   "author": "Dimitri Aatos Ellinas",
-  "license": "ISC",
+  "license": "CC-BY-NC-4.0",
   "devDependencies": {
     "@babel/core": "^7.5.5",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
@@ -25,6 +28,7 @@
     "eslint-config-google": "^0.13.0",
     "eslint-plugin-private-props": "^0.3.0",
     "eslint-plugin-react": "^7.14.3",
+    "html-loader": "^0.5.5",
     "style-loader": "^0.23.1",
     "webpack": "^4.39.3",
     "webpack-cli": "^3.3.7"
@@ -32,6 +36,8 @@
   "dependencies": {
     "@material-ui/core": "^4.3.3",
     "@material-ui/icons": "^4.2.1",
+    "about-window": "^1.13.1",
+    "electron-default-menu": "^1.0.1",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-redux": "^7.1.1",

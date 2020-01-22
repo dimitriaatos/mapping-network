@@ -1,3 +1,5 @@
+import { Speed } from "./classes";
+
 const plural = string => `${string}s`,
 singular = string => string.substring(0, string.length - 1)
 
@@ -22,7 +24,28 @@ deepMerge = (target, ...sources) => {
   }
 
   return deepMerge(target, ...sources)
-},
-maptomat = input => input === 'controls' ? 'columns' : 'rows'
+}
 
-export { plural, singular, clip, otherIO, otherType, deepMerge, maptomat }
+const oneLevelDownSpread = obj => {
+  return Object.keys(obj).reduce((accum, key) => {
+    const current = obj[key]
+    accum[key] = Array.isArray(current) ? [...current] : current
+    return accum
+  }, {})
+}
+
+const addSpeed = obj => (
+  Object.keys(obj).reduce((accum, key) => {
+    if (key === 'controls') {
+      accum[key] = obj[key].map(item => {
+        item.speed = new Speed(item.speed)
+        return item
+      })
+    } else {
+      accum[key] = obj[key]
+    }
+    return accum
+  }, {})
+)
+
+export { plural, singular, clip, otherIO, otherType, deepMerge, oneLevelDownSpread, addSpeed }

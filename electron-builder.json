@@ -10,7 +10,7 @@
       "dmg"
     ],
     "icon": "resources/macos/icon.icns",
-    "darkModeSupport": false,
+    "darkModeSupport": true,
     "type": "distribution"
   },
 
@@ -29,6 +29,13 @@
   "win": {
     "target": "nsis",
     "icon": "resources/win/icon.ico"
-  }
+  },
+
+  "fileAssociations": [{
+    "ext": "map",
+    "name": "Mapping Network File",
+    "role": "Editor",
+    "icon": "resources/macos/file_icon.icns"
+  }]
 
 }

@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-// import { Router } from 'react-router-static'
+import './menuActions'
+import './windowFunctions'
 
 import App from './components/App'
 
@@ -21,7 +22,7 @@ startMIDI().then(() => {
 
 ReactDOM.render(
   <Provider store={store}>
-    <App/>
+    <App />
     {/* <Router routes={routes} /> */}
   </Provider>,
   document.getElementById('app')

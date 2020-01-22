@@ -1,8 +1,11 @@
 import { app, BrowserWindow } from 'electron'
 import path from 'path'
 import { format as formatUrl } from 'url'
+import { createMenu, openFile } from './menu'
+import * as pack from './../../package.json'
 
 let mainWindow
+let launchedFromFile
 
 const developmentMode = process.env.NODE_ENV !== 'production'
 
@@ -18,11 +21,12 @@ const loadContents = (window, route) => {
   }
 }
 
+
 const createMainWindow = () => {
   const window = new BrowserWindow({
     width: 1000,
     height: 1000,
-    title: 'Mapping Network',
+    title: pack.productName,
     webPreferences: {
       nodeIntegration: true,
     },
@@ -39,6 +43,20 @@ const createMainWindow = () => {
 
 app.on('ready', () => {
   mainWindow = createMainWindow()
+  // mainWindow.toggleDevTools()
+  createMenu(mainWindow)
+
+  // if electron was launched from a file, open the file
+  launchedFromFile && openFile(mainWindow)([launchedFromFile])
+})
+
+app.on('open-file', (event, filePath) => {
+  event.preventDefault()
+
+  // store filePath if launched from file (not ready yet)
+  app.isReady() ?
+    openFile(mainWindow)([filePath]) :
+    (launchedFromFile = filePath)
 })
 
 app.on('window-all-closed', () => {

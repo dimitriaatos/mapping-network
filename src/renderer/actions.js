@@ -3,6 +3,7 @@ import appActions from './appActions'
 import { pureOutput } from './iofunctions'
 import matrix from './helpers/matrixFunctions'
 import { initItem } from './helpers/actionHelpers'
+import { addSpeed } from './helpers/functions'
 
 const change = axis => ['add', 'delete'].reduce((accum, act) => {
   accum[act] = item => {
@@ -125,7 +126,16 @@ const output = item => {
   }
 }
 
+const open = ({data, filePath}) => {
+  return {
+    type: 'OPEN',
+    data: addSpeed(data),
+    filePath,
+  }
+}
+
 const actions = {
+  open,
   mapping: {
     input,
     output,
