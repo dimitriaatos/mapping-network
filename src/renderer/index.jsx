@@ -11,6 +11,10 @@ import store from './store'
 import startMIDI from './initMIDI'
 import { io, map } from './init'
 
+if (module.hot) {
+  module.hot.accept();
+}
+
 startMIDI().then(() => {
   io()
   map(1)

@@ -1,15 +1,3 @@
 # Mapping Network
 
-An Electron app for making complex MIDI controller-to-software mappings for musical purposes. Aiming to mimic the overlapping one-to-many and many-to-one gesture-to-sound mappings that exist on acoustical musical instruments.
-
-## Prerequisite
-- Nodejs
-
-## Installation
-run the following commands on terminal
-```
-git clone https://github.com/dimitriaatos/mapping-network.git
-cd mapping-network
-npm install
-npm start
-```
+*Mapping Network* is an application for making complex MIDI controller-to-software mappings. Aiming to mimic the overlapping one-to-many and many-to-one gesture-to-sound mappings found on acoustical musical instruments. The interface is designed after the pin matrix popularized by hardware synths, with the addition of specifying percentages (or weights) to each mapping, rather than choosing just whether two parameters are mapped or not. *Mapping Network* has also built in a rate-of-change calculation feature for control parameters, enabling the use of motion as an excitation gesture for sound.

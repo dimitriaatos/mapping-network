@@ -2,10 +2,14 @@ import { app, BrowserWindow } from 'electron'
 import path from 'path'
 import { format as formatUrl } from 'url'
 import { createMenu, openFile } from './menu'
-import * as pack from './../../package.json'
+import * as pack from '../../package.json'
 
 let mainWindow
 let launchedFromFile
+
+if (module.hot) {
+  module.hot.accept();
+}
 
 const developmentMode = process.env.NODE_ENV !== 'production'
 
@@ -28,11 +32,15 @@ const createMainWindow = () => {
     height: 1000,
     title: pack.productName,
     webPreferences: {
-      nodeIntegration: true,
+			nodeIntegration: true,
+			enableRemoteModule: true,
+			contextIsolation: false,
     },
   })
 
-  loadContents(window)
+	loadContents(window)
+	
+	window.webContents.openDevTools()
 
   window.on('closed', () => {
     mainWindow = null
@@ -44,7 +52,9 @@ const createMainWindow = () => {
 app.on('ready', () => {
   mainWindow = createMainWindow()
   // mainWindow.toggleDevTools()
-  createMenu(mainWindow)
+	mainWindow.webContents.on('did-finish-load', () => {
+		createMenu(mainWindow)
+	})
 
   // if electron was launched from a file, open the file
   launchedFromFile && openFile(mainWindow)([launchedFromFile])

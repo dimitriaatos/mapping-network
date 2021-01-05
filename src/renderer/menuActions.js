@@ -1,22 +1,25 @@
-import electron from 'electron'
+import { ipcRenderer } from 'electron'
+// import remote from '@electron/remote'
 import store from './store'
 import actions from './actions'
 import { initMapping } from './store'
 import { map } from './init'
-
-const {ipcRenderer} = electron
 
 ipcRenderer.on('open', (event, {data, filePath}) => {
   store.dispatch(actions.open({data: JSON.parse(data), filePath}))
 })
 
 ipcRenderer.on('saveReq', (event, filePath) => {
-  filePath = filePath || store.getState().mapping.open
-  ipcRenderer.send('saveRes', {
-    filePath,
+	filePath = filePath || store.getState().mapping.open
+	console.log(`filepath = ${filePath ? 'saveRes' : 'saveAs'}`)
+  ipcRenderer.send( filePath ? 'saveRes' : 'saveAs', {
     data: JSON.stringify(store.getState().mapping),
-    window: electron.remote.getCurrentWindow(),
-  })
+		filePath,
+	})
+})
+
+ipcRenderer.on('print', (event, data) => {
+  console.log("lostre")
 })
 
 ipcRenderer.on('new', () => {
