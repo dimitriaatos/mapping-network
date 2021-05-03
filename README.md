@@ -1,3 +1,5 @@
 # Mapping Network
 
+![demo](demo.gif)
+
 *Mapping Network* is an application for making complex MIDI controller-to-software mappings. Aiming to mimic the overlapping one-to-many and many-to-one gesture-to-sound mappings found on acoustical musical instruments. The interface is designed after the pin matrix popularized by hardware synths, with the addition of specifying percentages (or weights) to each mapping, rather than choosing just whether two parameters are mapped or not. *Mapping Network* has also built in a rate-of-change calculation feature for control parameters, enabling the use of motion as an excitation gesture for sound.
